@@ -1,0 +1,713 @@
+// resizeable modal MAP
+$('#gpsMapModal .modal-content').resizable({
+    //alsoResize: ".modal-dialog",
+    minHeight: 400,
+    minWidth: 300
+});
+
+// resizeable modal Report (path:element/admin/popup_event_admin)
+$('#eventModal .modal-content').resizable({
+    //alsoResize: ".modal-dialog",
+    minHeight: 730,
+    minWidth: 550
+});
+
+// resizeable modal Face Image (path:element/admin/popup_face_admin)
+$('#faceModal .modal-content').resizable({
+    //alsoResize: ".modal-dialog",
+    minHeight: 450,
+    minWidth: 400
+});
+
+$('#gpsMapModal').on('show.bs.modal', function() {
+    $(this).find('.modal-body').css({
+        'max-height': '100%'
+    });
+});
+
+$('.modal-content').on('resize', function() {
+    $('#GPSCONTENT').height($(this).height() - 200)
+        // console.log()
+})
+
+var rad = function(x) {
+    return x * Math.PI / 180;
+};
+
+var load_table = -1
+
+var map;
+
+var lat = 0
+var long = 0
+var slat = 0
+var slong = 0
+var table = $('#serverDataTable').DataTable({
+    "dom": '<"pull-left"fi>tp',
+    "processing": true,
+    "serverSide": true,
+    "pageLength": PAGE_LIMIT_SPECIFIC,
+    "order": [
+        [2, 'desc']
+    ],
+    "ajax": {
+        headers: { 'X-CSRF-TOKEN': __csrfToken },
+        url: __baseUrl + 'ajax/getAllLongLatByDate',
+        type: 'POST',
+        data: function(d) {
+            let date_from = $("#datepicker_date").val()
+            let date_to = $("#datepicker_date_to").val()
+
+            d.staffIds = $("#multiple-select").val();
+            d.date_from = date_from;
+            d.date_to = date_to;
+            d.auth = $('#Auth').val()
+        }
+    },
+    "columns": [{
+            "data": null,
+            "sortable": false,
+            "sClass": "text-right",
+            render: function(data, type, row, meta) {
+                return meta.row + meta.settings._iDisplayStart + 1;
+            }
+        },
+        {
+            "data": "StaffID",
+            "sClass": "Staff-ID text-center",
+            render: function(data, type, row) {
+                var distance = (row.distance.toString().indexOf(".") > 0) ? commafy(Number(row.distance.toString().split(".")[0])) + "." + row.distance.toString().split(".")[1] : row.distance
+                return "" +
+                    row.StaffID +
+                    '<span class="tooltip-distance">StaffID: ' + row.StaffID + ' - Total distances: ' + distance + ' km</span>'
+            }
+        },
+        {
+            "data": "StaffName",
+            render: function(data, type, row) {
+                return "" +
+                    "<a href=\"javascript:void(0)\" class=\"open-staff\" data-staff=\"" + row.StaffID + "\">\n" +
+                    "\t" + row.StaffName + "\n" +
+                    "</a>"
+            }
+        },
+        { "data": "checkin", "sClass": "text-center" },
+        { "data": "checkout", "sClass": "text-center" },
+        {
+            "data": "CustomerName",
+            render: function(data, type, row) {
+                return "" +
+                    "<a href=\"javascript:void(0)\" class=\"open-customer\" data-customer=\"" + row.CustomerID + "\">\n" +
+                    "\t" + row.CustomerName + "\n" +
+                    "</a>"
+            }
+        },
+        {
+            data: "ID",
+            "sClass": "text-center",
+            orderable: false,
+            render: function(data, type, row) {
+                lat = removeNull(row.lat)
+                long = removeNull(row.long)
+                slat = removeNull(row.slat)
+                slong = removeNull(row.slong)
+                var distance = Number(getDistance({ 'lat': lat, 'lng': long }, { 'lat': slat, 'lng': slong }).replaceAll(",", ""))
+                var color = "#4e73df"
+                if (distance >= 500) {
+                    color = "#ea2d2d"
+                }
+                return "" +
+                    "<a href=\"#\" data-toggle=\"modal\" \n" +
+                    "\tdata-long=\"" + removeNull(row.long) + "\" \n" +
+                    "\tdata-lat=\"" + removeNull(row.lat) + "\" \n" +
+                    "\tdata-CustomerName=\"" + removeNull(row.CustomerName) + "\" \n" +
+                    "\tdata-slong=\"" + removeNull(row.slong) + "\" \n" +
+                    "\tdata-slat=\"" + removeNull(row.slat) + "\" \n" +
+                    "\tdata-StaffName=\"" + removeNull(row.StaffName) + "\" \n" +
+                    "\tclass=\"open-GPS\">\n" +
+                    "\t<i class=\"fas fa-map-marker-alt\" style=\"color:" + color + "\"></i>\n" +
+                    "</a>";
+                // return getDistance({'lat': removeNull(row.lat), 'long':removeNull(row.long)}, {'lat':removeNull(row.slat),'long':removeNull(row.slong)})
+            }
+        },
+        {
+            data: 'ID',
+            "sClass": "text-right",
+            orderable: false,
+            render: function(data, type, row) {
+                if (getDistance({ 'lat': lat, 'lng': long }, { 'lat': slat, 'lng': slong }) != 'NaN') {
+                    return getDistance({ 'lat': lat, 'lng': long }, { 'lat': slat, 'lng': slong }) + "m"
+                } else {
+                    return ""
+                }
+
+            }
+        },
+        {
+            data: "ID",
+            "sClass": "text-center",
+            orderable: false,
+            render: function(data, type, row) {
+                return "" +
+                    "<a href=\"#\" data-toggle=\"modal\" \n" +
+                    "\tdata-timecardid=\"" + removeNull(row.TimecardID) + "\" \n" +
+                    "\tdata-id=\"" + removeNull(row.id) + "\" \n" +
+                    "\tdata-staffid=\"" + removeNull(row.StaffID) + "\" \n" +
+                    "\tdata-staffname=\"" + removeNull(row.StaffName) + "\" \n" +
+                    "\tdata-date=\"" + removeNull(row.date) + "\" \n" +
+                    "\tdata-time=\"" + removeNull(row.time) + "\" \n" +
+                    "\tdata-ftime=\"" + removeNull(row.ftime) + "\" \n" +
+                    "\tdata-customerid=\"" + removeNull(row.CustomerID) + "\" \n" +
+                    "\tdata-customername=\"" + removeNull(row.CustomerName) + "\" \n" +
+                    "\tdata-report=\"" + removeNull(row.Report) + "\" \n" +
+                    "\tdata-imgcheckin=\"" + removeNull(row.imgcheckin) + "\" \n" +
+                    "\tdata-imgcheckout=\"" + removeNull(row.imgcheckout) + "\" \n" +
+                    "\tclass=\"open-AddBookDialog\">\n" +
+                    "\t<i class=\"far fa-edit\"></i>\n" +
+                    "</a>";
+            }
+        },
+        {
+            data: "ID",
+            "sClass": "text-center",
+            orderable: false,
+            render: function(data, type, row) {
+                return "" +
+                    "<a href=\"#\" data-toggle=\"modal\" \n" +
+                    "\tdata-checkin=\"" + removeNull(row.imgcheckin) + "\" \n" +
+                    "\tdata-checkout=\"" + removeNull(row.imgcheckout) + "\" \n" +
+                    "\tclass=\"open-Face\">\n" +
+                    "\t<i class=\"far fa-smile-beam\"></i>\n" +
+                    "</a>";
+            }
+        },
+    ],
+    "drawCallback": function(settings) {
+        if (load_table % 10 == 0) { //10
+            var api = this.api();
+            var lst_events = api.ajax.json().data;
+            MapModule.initGoogleMap(lst_events)
+            MapModule.addLocationsToMap(lst_events)
+        }
+
+        load_table++
+
+        // calcualte distance of staffs
+        // var staffs = api.ajax.json().sortedStaffs;
+        // calDistanceStaff(staffs)
+
+    }
+});
+
+// function calDistanceStaff(data){
+//     $.each(data, function(index, value){
+//         var totalDistance = 0
+//         for(var i = 0; i < value.length-1; i++){
+//             totalDistance += Number(getDistance({'lat': value[i].CheckinLocation.split(",")[0], 'lng': value[i].CheckinLocation.split(",")[1]},
+//                                                 {'lat': value[i+1].CheckinLocation.split(",")[0], 'lng': value[i+1].CheckinLocation.split(",")[1]})
+//                                     .replaceAll(",", ""))
+
+//         }
+//         totalDistance = (totalDistance / 1000).toFixed(2)
+
+//         // find staffid in table
+//         $('#serverDataTable .Staff-ID').each(function(){
+//             if($(this).html() == index){
+//                 $(this).append('<span class="tooltip-distance">StaffID: '+index+' - Total distances: '+totalDistance+' km</span>')
+//             }
+//         })
+//     })
+// }
+
+let gps_events = []
+var centerDefault = 10
+jQuery(document).ready(function() {
+
+    // $("#datepicker_date").datepicker({
+    //     format: 'yyyy/mm/dd',
+    //     autoclose: true,
+    //     todayHighlight: true
+
+    // });
+
+    $('#timepicker_alert').datetimepicker({
+            format: 'HH:mm',
+            keepOpen: true
+                // inline: true,
+                // sideBySide: true
+        })
+        // $('#timepicker_alert').click(function() {
+        //     console.log($('.bootstrap-datetimepicker-widget').closest("div").html())
+        // });
+
+
+    setRangeDatepicker.rangeDay('#datepicker_date', '#datepicker_date_to')
+
+    $(document).on('click', '#filterSchedule', function() {
+        load_table = 0
+        showMapByStaff()
+        var date_from = $("#datepicker_date").val()
+        var date_to = $("#datepicker_date_to").val()
+        if (date_from == moment().format('YYYY/MM/DD') && date_to == moment().format('YYYY/MM/DD')) {
+            autoReload = setInterval(function() {
+                showMapByStaff()
+            }, 30000)
+        } else {
+            clearInterval(autoReload)
+        }
+    })
+
+    $(document).on('click', '.open-staff', function() {
+        $.ajax({
+            headers: { 'X-CSRF-TOKEN': __csrfToken },
+            url: __baseUrl + 'admin/schedule/getStaff',
+            type: 'POST',
+            data: {
+                'staffID': $(this).attr('data-staff')
+            },
+            success: function(res) {
+                if (res.success == 1) {
+                    var data = res.data
+                    $('#modalInfoStaff #StaffID').html(data.StaffID)
+                    $('#modalInfoStaff #Name').html(data.Name)
+                    $('#modalInfoStaff #Position').html(data.Position)
+                    $('#modalInfoStaff #InfoArea').html(data.AreaName)
+                    $('#modalInfoStaff #InfoTitle').html(data.Title)
+                    $('#modalInfoStaff #InfoRegion').html(data.RegionName)
+                    $('#modalInfoStaff').modal('show')
+                }
+            }
+        })
+    })
+
+    $(document).on('click', '.open-customer', function() {
+        $.ajax({
+            headers: { 'X-CSRF-TOKEN': __csrfToken },
+            url: __baseUrl + 'admin/schedule/getCustomer',
+            type: 'POST',
+            data: {
+                'customerID': $(this).attr('data-customer')
+            },
+            success: function(res) {
+                if (res.success == 1) {
+                    var data = res.data
+                    $('#modalInfoCustomer #CustomerID').html(data.CustomerID)
+                    $('#modalInfoCustomer #Name').html(data.Name)
+                    $('#modalInfoCustomer #AreaName').html(data.AreaName)
+                    $('#modalInfoCustomer #Address').html(data.Address)
+                    $('#modalInfoCustomer #TaxCode').html(data.TaxCode)
+                    $('#modalInfoCustomer #Latitude').html(data.Latitude)
+                    $('#modalInfoCustomer #Longitude').html(data.Longitude)
+                    var impleDate = (data.ImplementDate) ? moment(data.ImplementDate).format('YYYY/MM/DD') : ""
+                    $('#modalInfoCustomer #ImplementDate').html(impleDate)
+                    $('#modalInfoCustomer #PositionNo').html(data.PositionNo)
+                    $('#modalInfoCustomer').modal('show')
+                }
+            }
+        })
+    })
+
+    $(document).on("click", ".open-AddBookDialog", function() {
+        $("#StaffID").html($(this).attr('data-StaffID'));
+        $("#StaffName").html($(this).attr('data-StaffName'));
+        $("#date").html($(this).attr('data-date'));
+        // $("#time").html(  $(this).attr('data-ftime') );
+        $("#CustomerID").html($(this).attr('data-CustomerID'));
+        $("#CustomerName").html($(this).attr('data-CustomerName'));
+        var report_id = $(this).attr('data-id')
+
+        $.ajax({
+            headers: { 'X-CSRF-TOKEN': __csrfToken },
+            url: __baseUrl + 'admin/schedule/getReport',
+            type: 'POST',
+            data: {
+                'id': report_id,
+                'timecardID': $(this).attr('data-timecardid')
+            },
+            success: function(res) {
+                const data = res.report
+                if (data != null) {
+                    $("#time").html(data.ftime);
+                    setFormReport(res)
+                    appendImages(report_id, res.images)
+                } else {
+                    $('#time').html(res.timecard.ftime)
+                    $("textarea-report").val('');
+                    $('.content-report').css('display', 'none')
+                    $('.form-report').css('display', 'none')
+                }
+
+            }
+        })
+
+        $("#Picture").attr("data-checkIn", $(this).attr('data-imgcheckin'))
+        $("#Picture").attr("data-checkOut", $(this).attr('data-imgcheckout'))
+
+        setTimeout(function() {
+            $('#eventModal').modal()
+        }, 500)
+    });
+
+    $(document).on("click", "#Picture", function() {
+        let img_in = $(this).attr('data-checkIn');
+        let img_out = $(this).attr('data-checkOut');
+        if (img_in) {
+            img_in = '<img src="' + __baseUrl + img_in + '" width="150px">'
+        }
+        if (img_out) {
+            img_out = '<img src="' + __baseUrl + img_out + '" width="150px">'
+        }
+        $("#checkIn").html(img_in);
+        $("#checkOut").html(img_out);
+
+        $('#faceModeClose').hide()
+        $('#faceModeBack').show()
+        $('#eventModal').modal('hide')
+
+        $('#faceModal').modal()
+    });
+
+    $(document).on("click", "#faceModeBack", function() {
+        $('#faceModal').modal('hide')
+        $('#eventModal').modal()
+    });
+
+    $(document).on("click", "#close-report", function() {
+        $('#eventModal').modal('hide')
+    });
+
+    $(document).on("click", ".open-Face", function() {
+        let img_in = $(this).attr('data-checkIn');
+        let img_out = $(this).attr('data-checkOut');
+        if (img_in) {
+            img_in = '<img src="' + __baseUrl + img_in + '" width="150px">'
+        }
+        if (img_out) {
+            img_out = '<img src="' + __baseUrl + img_out + '" width="150px">'
+        }
+        $("#checkIn").html(img_in);
+        $("#checkOut").html(img_out);
+
+
+        $('#faceModeClose').show()
+        $('#faceModeBack').hide()
+        $('#faceModal').modal()
+    });
+
+    $(document).on("click", "#faceModeClose", function() {
+        $('#faceModal').modal('hide')
+    });
+
+    $(document).on("click", ".open-GPS", function() {
+        //do something
+        gps_events = {
+            long: $(this).attr("data-long"),
+            lat: $(this).attr("data-lat"),
+            CustomerName: $(this).attr("data-CustomerName"),
+            slong: $(this).attr("data-slong"),
+            slat: $(this).attr("data-slat"),
+            StaffName: $(this).attr("data-StaffName")
+        }
+        GPSCheckinModule.initGoogleMap(gps_events)
+        GPSCheckinModule.addLocationsToMap(gps_events)
+        $("#gpsMapModal").modal()
+    });
+
+    $('#GPSCONTENT').on("wheel", function(evt) {
+        // console.log(evt.originalEvent.deltaY);
+        // var i = 10
+        if (evt.originalEvent.deltaY > 0) {
+            // GPSCheckinModule.initGoogleMap(gps_events, --centerDefault)
+            // GPSCheckinModule.addLocationsToMap(gps_events)
+            mapCheckin.setZoom(--centerDefault)
+        } else {
+            // GPSCheckinModule.initGoogleMap(gps_events, ++centerDefault)
+            // GPSCheckinModule.addLocationsToMap(gps_events)
+            mapCheckin.setZoom(++centerDefault)
+        }
+    });
+
+
+    $("#close-report").click(function() {
+        //do something
+        $("#largeModal").modal('hide')
+    });
+
+})
+
+
+
+var setRangeDatepicker = (function() {
+    var rangeDay = function(dateFrom, dateTo, startDate = 0) {
+        // var tdate = new Date();
+        // var ddate = new Date(tdate.setDate(tdate.getDate() - 30));
+        jQuery(dateFrom).datepicker({
+                format: "yyyy/mm/dd",
+                startDate: startDate,
+                autoclose: true,
+                todayHighlight: true,
+
+            })
+            .on("change", function() {
+                jQuery(dateTo).datepicker("destroy");
+                jQuery(dateTo).datepicker({
+                    format: "yyyy/mm/dd",
+                    startDate: jQuery(dateFrom).val(),
+                    autoclose: true,
+                    todayHighlight: true,
+                })
+                if (jQuery(dateTo).val() < jQuery(dateFrom).val()) {
+                    jQuery(dateTo).val(jQuery(dateFrom).val())
+                }
+            })
+            .on('click', function() {
+                jQuery(dateFrom).datepicker('update', jQuery(dateFrom).val())
+            });
+        jQuery(dateTo).datepicker({
+                format: "yyyy/mm/dd",
+                startDate: startDate,
+                autoclose: true,
+                todayHighlight: true,
+            })
+            .on("change", function() {
+                jQuery(dateFrom).datepicker("destroy");
+                jQuery(dateFrom).datepicker({
+                    format: "yyyy/mm/dd",
+                    startDate: startDate,
+                    endDate: jQuery(dateTo).val(),
+                    autoclose: true,
+                    todayHighlight: true,
+                })
+                if (jQuery(dateTo).val() < jQuery(dateFrom).val()) {
+                    jQuery(dateFrom).val(jQuery(dateTo).val())
+                }
+            })
+            .on('click', function() {
+                jQuery(dateTo).datepicker('update', jQuery(dateTo).val())
+            });
+    }
+
+    var validDay = function(dateFrom, dateTo) {
+        var from = jQuery(dateFrom).val()
+        var to = jQuery(dateTo).val()
+        if (from == "" || to == "") {
+            swal('Please input date.', {
+                buttons: {
+                    cancel: "OK",
+                },
+            });
+            return false
+        } else if (to < from) {
+            swal('Date to cannot set before date from.', {
+                buttons: {
+                    cancel: "OK",
+                },
+            });
+            jQuery(dateTo).datepicker('clearDates')
+            jQuery(dateTo).val("");
+            return false
+        } else return true
+    }
+
+    return {
+        rangeDay: rangeDay,
+        validDay: validDay
+    }
+})();
+
+function getDistance(p1, p2) {
+    var R = 6378137; // Earth’s mean radius in meter
+    var dLat = rad(p2.lat - p1.lat);
+    var dLong = rad(p2.lng - p1.lng);
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(rad(p1.lat)) * Math.cos(rad(p2.lat)) *
+        Math.sin(dLong / 2) * Math.sin(dLong / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
+    return commafy(d.toFixed(0)); // returns the distance in meter
+};
+
+function commafy(num) {
+    var str = num.toString().split('.');
+    str[0] = str[0].replace(/(\d)(?=(\d{3})+$)/g, '$1,');
+    if (str[1]) {
+        str[1] = str[1].replace(/(\d{3})/g, '$1 ');
+    }
+    return str.join(',');
+}
+
+function showMapByStaff() {
+    // datepicker = $("#datepicker_date").val()
+    // if (datepicker == '') datepicker = $("#default_datepicker").val()
+    table.ajax.reload();
+}
+
+function removeNull(string) {
+    if (string == null) {
+        return ''
+    } else {
+        return string
+    }
+}
+
+var MapModule = (function() {
+    var mapElement = document.getElementById("staffScheduleMap");
+    var mapInstance = null;
+
+    var initGoogleMap = function() {
+
+        mapInstance = new google.maps.Map(mapElement, {
+            zoom: 5.5,
+            center: new google.maps.LatLng(15.967674, 108.020437),
+            //center: new google.maps.LatLng(lst_events[0].lat, lst_events[0].long),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+    }
+
+    var addLocationsToMap = function(lst_events) {
+        // Create markers.
+        for (i = 0; i < lst_events.length; i++) {
+            new google.maps.Marker({
+                position: new google.maps.LatLng(lst_events[i].lat, lst_events[i].long),
+                map: mapInstance,
+                title: lst_events[i].CustomerName
+            });
+        }
+    }
+
+    return {
+        initGoogleMap: initGoogleMap,
+        addLocationsToMap: addLocationsToMap
+    }
+})()
+
+var GPSModule = (function() {
+    var mapElement = document.getElementById("GPSCONTENT");
+    var mapInstance = null;
+
+    var initGoogleMap = function() {
+
+        mapInstance = new google.maps.Map(mapElement, {
+            zoom: 5,
+            center: new google.maps.LatLng(15.967674, 108.020437),
+            //center: new google.maps.LatLng(gps_events.lat, gps_events.long),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+    }
+
+    var addLocationsToMap = function(lst_events) {
+        // Create markers.
+        new google.maps.Marker({
+            position: new google.maps.LatLng(gps_events.lat, gps_events.long),
+            map: mapInstance,
+            title: gps_events.CustomerName
+        });
+
+        // Create staff.
+        new google.maps.Marker({
+            position: new google.maps.LatLng(gps_events.slat, gps_events.slong),
+            map: mapInstance,
+            title: gps_events.StaffName,
+            icon: {
+                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+            }
+        });
+    }
+
+    return {
+        initGoogleMap: initGoogleMap,
+        addLocationsToMap: addLocationsToMap
+    }
+})()
+
+var mapCheckin = null;
+// var mapOptions = {
+//     center: new google.maps.LatLng(gps_events.lat, gps_events.long),
+//     zoom: centerDefault,
+//     scrollwheel: false,
+//     disableDoubleClickZoom: true,
+//     mapTypeId: google.maps.MapTypeId.ROADMAP
+// };
+// mapCheckin = new google.maps.Map(document.getElementById("GPSCONTENT"),
+//     mapOptions);
+
+
+var GPSCheckinModule = (function() {
+    var mapElement = document.getElementById("GPSCONTENT");
+
+
+    var initGoogleMap = function() {
+
+        mapCheckin = new google.maps.Map(mapElement, {
+            // zoom: 5,
+            zoom: 10,
+            scrollwheel: false,
+            // center: new google.maps.LatLng(15.967674, 108.020437),
+            center: new google.maps.LatLng(gps_events.lat, gps_events.long),
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        });
+    }
+
+    var addLocationsToMap = function(lst_events) {
+        // Create markers.
+        new google.maps.Marker({
+            position: new google.maps.LatLng(gps_events.lat, gps_events.long),
+            map: mapCheckin,
+            title: gps_events.CustomerName
+        });
+
+        // Create staff.
+        new google.maps.Marker({
+            position: new google.maps.LatLng(gps_events.slat, gps_events.slong),
+            map: mapCheckin,
+            title: gps_events.StaffName,
+            icon: {
+                url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"
+            }
+        });
+    }
+
+    return {
+        initGoogleMap: initGoogleMap,
+        addLocationsToMap: addLocationsToMap
+    }
+})()
+
+
+
+$('#serverDataTable th').on('click', function() {
+    setSort($(this))
+})
+
+function setSort(self) {
+    setTimeout(function() {
+        var index = $('th:contains(' + self.html() + ')').index()
+        var dir = ''
+        if (index != 0) {
+            var name_col = self.html()
+            $('#currIndexSort').val(index)
+            dir = (self.attr('aria-sort') == 'ascending') ? "asc" : "desc"
+            $('#currDirSort').val(dir)
+
+            $.ajax({
+                url: __baseUrl + 'admin/schedule/sessionSort',
+                headers: { 'X-CSRF-Token': __csrfToken },
+                type: 'post',
+                data: { 'col': name_col, 'dir': dir },
+            })
+        }
+    }, 1000)
+}
+
+// DECLARE AUTORELOAD
+var autoReload
+
+function beforeRender() {
+    var col = $('#currIndexSort').val()
+    var dir = $('#currDirSort').val()
+    table.order([Number(col), dir]).draw()
+    autoReload = setInterval(function() {
+        showMapByStaff()
+    }, 30000)
+}
+window.onload = beforeRender()

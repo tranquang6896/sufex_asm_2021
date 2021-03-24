@@ -1,0 +1,19 @@
+2021-01-07 13:22:44 Error: [RuntimeException] Unknown command `cake clear`. Run `cake --help` to get the list of valid commands. in C:\wamp64\www\alsok_2020\vendor\cakephp\cakephp\src\Console\CommandRunner.php on line 346
+Stack Trace:
+#0 C:\wamp64\www\alsok_2020\vendor\cakephp\cakephp\src\Console\CommandRunner.php(157): Cake\Console\CommandRunner->resolveName(Object(Cake\Console\CommandCollection), Object(Cake\Console\ConsoleIo), 'clear')
+#1 C:\wamp64\www\alsok_2020\bin\cake.php(12): Cake\Console\CommandRunner->run(Array)
+#2 {main}
+
+
+2021-03-21 09:20:20 Warning: Warning (2): mail(): Failed to connect to mailserver at "localhost" port 25, verify your "SMTP" and "smtp_port" setting in php.ini or use ini_set() in [C:\wamp64\www\_a.main\alsok_2020\src\Command\TestCommand.php, line 15]
+Trace:
+Cake\Error\BaseErrorHandler::handleError() - CORE\src\Error\BaseErrorHandler.php, line 168
+mail - [internal], line ??
+App\Command\TestCommand::execute() - APP/Command\TestCommand.php, line 15
+Cake\Console\Command::run() - CORE\src\Console\Command.php, line 207
+Cake\Console\CommandRunner::runCommand() - CORE\src\Console\CommandRunner.php, line 366
+Cake\Console\CommandRunner::run() - CORE\src\Console\CommandRunner.php, line 165
+[main] - ROOT\bin\cake.php, line 12
+
+
+

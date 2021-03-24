@@ -1,0 +1,13 @@
+#staffScheduleMap {
+  height: 100%;
+}
+
+.table-th{
+  width: 20%;
+}
+
+.dataTables_filter{ display: none; }
+.dataTables_info {padding-top:0 !important}
+#Report {
+    white-space: pre-line;
+}

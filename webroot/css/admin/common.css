@@ -1,0 +1,69 @@
+﻿.w-5 {
+    width: 5% !important
+}
+
+.w-10 {
+    width: 10% !important
+}
+
+.w-12 {
+    width: 12% !important
+}
+
+.w-15 {
+    width: 15% !important
+}
+
+.w-30 {
+    width: 30% !important;
+}
+
+.pull-left {
+    float: left;
+}
+
+.w-150 {
+    width: 150% !important;
+}
+
+.form-control:focus {
+    border-color: initial;
+    outline: 0;
+    box-shadow: none;
+}
+
+#report_event {
+    padding: 2px;
+}
+
+#report_event:read-only {
+    border: none;
+}
+
+#report_event {
+    width: 100%;
+    padding: 3px;
+    /* margin-top: 7px; */
+    border: 2px solid #dddfeb !important;
+}
+
+.input-text {
+    position: relative;
+}
+.input-text i {
+    position: absolute;
+    right: 5%;
+    top: 30%;
+    color: #c5c1c1;
+    cursor: pointer;
+    font-size: 18px;
+    display: none;
+}
+
+.flags-report{
+    background:#ddd;
+    padding:2px 5px 5px 5px;
+    margin-left:3px;
+    border-radius:5px;
+}
+

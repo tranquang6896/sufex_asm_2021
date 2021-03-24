@@ -1,0 +1,5 @@
+{
+     "css.lint.propertyIgnoredDueToDisplay": "ignore",
+     "less.lint.propertyIgnoredDueToDisplay": "ignore",
+     "scss.lint.propertyIgnoredDueToDisplay": "ignore"
+}

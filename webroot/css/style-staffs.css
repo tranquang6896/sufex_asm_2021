@@ -1,0 +1,292 @@
+﻿body {
+    margin: 0;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #333;
+    text-align: left;
+    background-color: #daddde;
+}
+a {
+
+    color: #007aff;
+
+    text-decoration: none;
+
+    background-color: transparent
+
+}
+
+
+
+a:hover {
+
+    color: #0055b3;
+
+    text-decoration: underline
+
+}
+
+
+
+a:not([href]):not([class]) {
+
+    color: inherit;
+
+    text-decoration: none
+
+}
+
+
+
+a:not([href]):not([class]):hover {
+
+    color: inherit;
+
+    text-decoration: none
+
+}
+
+.top-menu{
+	/* display:flex; */
+	height: 30px;
+	background: #145296;
+	padding: 10px 20px;
+}
+.media-object{
+	width:auto;
+	height:30px
+}
+.navbar-brand{
+	color:#fff;
+	font-size:20px;
+	width: 60%;
+	float: left;
+	display: flex;
+}
+.time{
+	width: 180px;
+	float:right;
+	color:#fff;
+	line-height: 30px;
+	font-weight: 700;
+	font-size: 16px;
+	/* text-align:right */
+}
+.content {
+	margin: 0px 0px 10px 0px;
+	background:#fff;
+	padding: 20px 25px 20px 20px;
+}
+.title{
+	font-size:26px;
+	margin-left:20px;
+	font-weight:700;
+	/* margin-bottom: 50px; */
+	line-height: 26px;
+}
+.div-left{
+	width: 56%;
+	float:left;
+	/* display:flex; */
+}
+.bg-camera{
+	background: url('../img/bg-camera.jpg') ;
+	background-position:center;
+	background-size:cover;
+	margin-top:5px;
+	min-height:410px;
+	border:1px #ccc solid
+}
+.div-right{
+	width: 44%;
+	float:right;
+}
+.div-staff{
+	width:33.33333%;
+	float:left;
+	background:#cccc
+}
+
+#staff {
+	float: left;
+	background-color: #EAEAEA;
+	padding: 7px;
+	position: relative;
+	border: 1px #ccc solid;
+	width: 26%;
+	float: left;
+	margin: 5px;
+	text-align: center;
+}
+
+/* from: http://stackoverflow.com/questions/796087/make-a-div-into-a-link */
+#staff a span { 
+  position:absolute; 
+  width:100%;
+  height:100%;
+  top:0;
+  left: 0;
+
+  /* edit: added z-index */
+  z-index: 1;
+
+  /* edit: fixes overlap error in IE7/8, 
+     make sure you have an empty gif */
+  background-image: url('empty.gif');
+}
+
+#staff:hover {
+	background-color: #0055B3;
+	color:#fff
+}
+.clearfix{
+	clear:both
+}
+.div-left img{
+	/* width:100% */
+	height: 79px;
+}
+.div-left p{
+	font-weight:bold;
+	padding:0px;
+	margin:0px
+}
+#staff:active {
+	background-color: #0055B3;
+  top: +2px;
+}
+
+.form {
+  /* display:flex; */
+  margin: 20px 0 10px 0px;
+  width:100%;
+  /* padding: 0px; */
+}
+.form input {
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: #f2f2f2;
+  border: 0;
+  margin: 0 5px 0 0px;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px #ccc solid;
+}
+.form button {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background: #AF2327;
+  border: 0;
+  padding: 10px;
+  color: #FFFFFF;
+  font-size: 18px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.form button:hover,.form button:active,.form button:focus {
+  background: #C9282D;
+}
+.form .button1 {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background: #34a141;
+  border: 0;
+  margin-right:5px;
+  padding: 10px;
+  color: #FFFFFF;
+  font-size: 18px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.form .button1:hover,.form .button1:active,.form .button1:focus {
+  background: #C9282D;
+}
+.form .button2 {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background: #666;
+
+  border: 0;
+  margin-right:5px;
+  padding: 10px;
+  color: #FFFFFF;
+  font-size: 18px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+.form .button2:hover,.form .button2:active,.form .button2:focus {
+  background: #C9282D;
+}
+
+
+.div-70{
+	width:70%;
+	float:left
+}
+.div-30{
+	width:28%;
+	float:right
+}
+.w-170px{
+width:170px;
+}
+.w-200px{
+width:345px;
+}
+
+.w-80px{
+width:100px;
+
+}
+.w-100{
+width:100%;
+
+}
+.w-49{width:49%;font-weight: 700;}
+.f-r{
+	float:right
+}
+.f-l{
+	float:left
+}
+.footer{
+	text-align:center;
+	margin: 0 20px;
+}
+.headoff{
+	background:#145296;
+	color:#fff;
+	font-weight:bold;
+	padding:10px;
+	text-align:center;
+	margin-top:20px
+}
+.m-t40{
+	margin-top:40px
+}
+.color1{
+	color:#34a141;
+	border: 1px #34a141 solid;
+	border-radius: 4px;
+	padding: 10px 0px;
+	text-align: center;
+}
+.color2{
+	color:#AF2327;
+
+	border: 1px #AF2327 solid;
+	border-radius: 4px;
+	padding: 10px 0px;
+	text-align: center;
+}
+}
