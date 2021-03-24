@@ -4,7 +4,7 @@
 /config/.env
 /config/app.php
 /logs/*
-/tmp/*
+tmp/*
 /vendor/*
 /webroot/pdf/*
 /webroot/QRcode/*
