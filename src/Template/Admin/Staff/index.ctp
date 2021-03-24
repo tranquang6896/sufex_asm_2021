@@ -55,6 +55,7 @@
 <!-- popups -->
 <?php echo $this->element('Admin/popup_staff'); ?>
 <?php echo $this->element('Admin/popup_qrcode'); ?>
+<?php echo $this->element('Admin/popup_view_image'); ?>
 
 <!-- script for staff -->
 <?= $this->Html->script('admin/alsok/staff.js?v='. date('YmdHis'), ['block' => 'scriptBottom']) . PHP_EOL ?>

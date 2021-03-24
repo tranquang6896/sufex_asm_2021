@@ -68,10 +68,10 @@ class MypageController extends AppController
     public function beforeRender(Event $event)
     {
         parent::beforeRender($event);
-        $this->viewBuilder()->setLayout('mypage');
     }
 
     public function index(){
+        $this->viewBuilder()->setLayout('mypage');
         $areas = $this->TBLTAreaStaff->find()->where(['StaffID' => $this->Auth->user('StaffID')])->toArray();
         // // sort by AreaName
         // $area = array();
@@ -150,9 +150,20 @@ class MypageController extends AppController
     }
 
     public function location($lat, $long){
+        $this->viewBuilder()->setLayout('mypage');
         // $this->viewBuilder()->setLayout('location');
         $this->set('lat', $lat);
         $this->set('long', $long);
+    }
+
+    public function staffs(){
+        $this->viewBuilder()->setLayout('staffs');
+        $staffs = $this->TBLMStaff->find()
+            ->where([
+                'FlagDelete' => 0,
+                'Position LIKE' => '%Leader%'
+            ]);
+        $this->set('staffs', $staffs);
     }
 
     public function getType(){

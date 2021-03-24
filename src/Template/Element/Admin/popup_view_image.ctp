@@ -45,7 +45,7 @@
     background-size: cover;
     /* height: 94vh; */
     width: auto;
-    height: 100%;
+    /* height: 100%; */
 }
 #viewImageModal{
     z-index:2000;

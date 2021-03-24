@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <link rel="shortcut icon" href="<?php $this->Url->build("/", true); ?>img/favicon.ico">
+    <link rel="shortcut icon" href="<?php echo $this->Url->build("/", true); ?>img/favicon.ico">
     <!-- App title -->
     <title>ASM Timecard System</title>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
@@ -23,7 +23,7 @@
     <style>
         .video {
             width: 100%;
-            /* max-height: 500px; */
+            max-height: 620px;
             margin-top: 5px
         }
     </style>
@@ -42,101 +42,18 @@
 
         <div id="content" class="content">
             <div class="div-left">
-                <div id="staff">
-                    <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>img/staff.png?v=1" /></p>
 
-                    <p>Staff Name</p>
+                <?php foreach($staffs as $staff):?>
+                    <div class="staff-avatar" data-active="false">
+                        <?php if($staff->Image != ""):?> 
+                            <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>files/StaffImage/<?php echo $staff->Image?>" /></p>
+                        <?php endif; ?>
 
-                    <a href="#"><span></span></a>
-                </div>
+                        <p><?php echo $staff->Name; ?></p>
 
-                <div id="staff">
-                    <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>img/staff.png?v=1" /></p>
-
-                    <p>Staff Name</p>
-
-                    <a href="#"><span></span></a>
-                </div>
-
-                <div id="staff">
-                    <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>img/staff.png?v=1" /></p>
-
-                    <p>Staff Name</p>
-
-                    <a href="#"><span></span></a>
-                </div>
-
-                <div id="staff">
-                    <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>img/staff.png?v=1" /></p>
-
-                    <p>Staff Name</p>
-
-                    <a href="#"><span></span></a>
-                </div>
-
-                <div id="staff">
-                    <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>img/staff.png?v=1" /></p>
-
-                    <p>Staff Name</p>
-
-                    <a href="#"><span></span></a>
-                </div>
-
-                <div id="staff">
-                    <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>img/staff.png?v=1" /></p>
-
-                    <p>Staff Name</p>
-
-                    <a href="#"><span></span></a>
-                </div>
-
-                <div id="staff">
-                    <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>img/staff.png?v=1" /></p>
-
-                    <p>Staff Name</p>
-
-                    <a href="#"><span></span></a>
-                </div>
-
-                <div id="staff">
-                    <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>img/staff.png?v=1" /></p>
-
-                    <p>Staff Name</p>
-
-                    <a href="#"><span></span></a>
-                </div>
-
-                <div id="staff">
-                    <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>img/staff.png?v=1" /></p>
-
-                    <p>Staff Name</p>
-
-                    <a href="#"><span></span></a>
-                </div>
-
-                <div id="staff">
-                    <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>img/staff.png?v=1" /></p>
-
-                    <p>Staff Name</p>
-
-                    <a href="#"><span></span></a>
-                </div>
-
-                <div id="staff">
-                    <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>img/staff.png?v=1" /></p>
-
-                    <p>Staff Name</p>
-
-                    <a href="#"><span></span></a>
-                </div>
-
-                <div id="staff">
-                    <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>img/staff.png?v=1" /></p>
-
-                    <p>Staff Name</p>
-
-                    <a href="#"><span></span></a>
-                </div>
+                        <a href="#"><span></span></a>
+                    </div>
+                <?php endforeach;?>
 
                 <div class="clearfix"></div>
             </div>
@@ -187,18 +104,17 @@
     echo $this->Html->script('venobox.min.js') . PHP_EOL;
     ?>
 
+    <!-- APP -->
+    <?php
+    echo $this->Html->script("home.js") . PHP_EOL;
+    ?>
+
     <script>
         const date = document.getElementById("date");
 
         function updateDate() {
-            let newDate = new Date();
-            let year = newDate.getFullYear();
-            let month = newDate.getMonth() + 1;
-            let days = newDate.getDate();
-            let hour = newDate.getHours();
-            let mins = newDate.getMinutes();
-            let sec = newDate.getSeconds();
-            let clockJSRead = `${year}/${month}/${days}  ${hour}:${mins}:${sec}`;
+           
+            let clockJSRead = moment().format("YYYY/MM/DD HH:mm:ss");
             date.textContent = clockJSRead;
         }
         setInterval(updateDate, 1000);

@@ -66,7 +66,14 @@ var table = $('#serverDataTable').DataTable({
         { "data": "Name" },
         { "data": "Password", orderable: false },
         { "data": "Position", "sClass": "text-center" },
-        { "data": "Area", "sClass": "area-text" },
+        {
+            "data": "Image",
+            "sClass": "text-center",
+            render: function(data, type, row) {
+                if (row.Image && row.Image != "") { return '<img src="' + __baseUrl + "files/StaffImage/" + row.Image + '" class="img-zoom" style="width:100px">' }
+                return ""
+            }
+        },
         {
             "data": "Region",
             "sClass": "text-center",
@@ -138,6 +145,13 @@ $(document).ready(function() {
         e.preventDefault();
         $('#gallery-photo-add').val('');
     });
+
+    // ZOOM IMAGE
+    $(document).on('click', '.img-zoom', function() {
+        $('#venoboxImage').attr('src', $(this).attr('src'))
+        $('#viewImageModal').modal()
+    })
+
     $(document).on('click', '.btn-clear-image', function(e) {
         e.preventDefault();
         $('#gallery-photo-add').val('');

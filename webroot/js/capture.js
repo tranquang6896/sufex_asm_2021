@@ -77,6 +77,7 @@
                 if (isNaN(height)) {
                     height = 500
                 }
+
                 streaming = true;
             }
         }, false);
