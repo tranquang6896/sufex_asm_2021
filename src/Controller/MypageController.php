@@ -163,6 +163,19 @@ class MypageController extends AppController
                 'FlagDelete' => 0,
                 'Position LIKE' => '%Leader%'
             ]);
+        // get language
+        $language = $this->request->session()->read('Config.language');
+        $language_list = ['en_US' => 'EN', 'jp_JP' => 'JP', 'vn_VN' => 'VN'];
+
+        $data_lang = $this->TBLMLanguage->find()
+            ->select(['KeyString', $language_list[$language] . 'Language'])
+            ->toArray();
+        $data_language = [];
+        foreach ($data_lang as $value) {
+            $data_language[$value['KeyString']] = $value[$language_list[$language] . 'Language'];
+        }
+        $this->set('lang', $language_list[$language]);
+        $this->set('data_language', $data_language);
         $this->set('staffs', $staffs);
     }
 
@@ -647,6 +660,9 @@ class MypageController extends AppController
         return $this->response->withType('application/json')->withStringBody(json_encode($result));
     }
 
+    /**
+     * Check exist timecard with that customer
+     */
     public function checkTimecardOfCustomer(){
         $result = [];
         $staffid = $this->Auth->user('StaffID');
@@ -738,6 +754,9 @@ class MypageController extends AppController
         return $this->response->withType('application/json')->withStringBody(json_encode($response));
     }
 
+    /**
+     * Save value checked in form report
+     */
     public function queryCheck(){
         $result['success'] = 0;
         $timecard = $this->getRequest()->getData('timecard');

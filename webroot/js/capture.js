@@ -1,10 +1,10 @@
-(function() {
+(function () {
     // The width and height of the captured photo. We will set the
     // width to the value defined here, but the height will be
     // calculated based on the aspect ratio of the input stream.
 
-    var width = 0; // We will scale the photo width to this
-    var height = 0; // This will be computed based on the input stream
+    var width = 0;    // We will scale the photo width to this
+    var height = 0;     // This will be computed based on the input stream
 
     // |streaming| indicates whether or not we're currently streaming
     // video from the camera. Obviously, we start at false.
@@ -14,52 +14,29 @@
     // The various HTML elements we need to configure or control. These
     // will be set by the startup() function.
 
-    var videos = null;
+    var video = null;
     var canvas = null;
+    // var photo = null;
     var checkin = null;
     var checkout = null;
 
     function startup() {
-
-        videos = document.getElementById('video');
+        video = document.getElementById('video');
         canvas = document.getElementById('canvas');
+        // photo = document.getElementById('photo');
+        checkin = document.getElementById('btnInsertCheckin');
+        checkout = document.getElementById('btnInsertCheckout');
 
-        turnOn(videos)
-
-        // checkin = document.getElementById('btnInsertCheckin');
-        // checkout = document.getElementById('btnInsertCheckout');
-
-        // checkin.addEventListener('click', function(ev) {
-        //     if (streaming) {
-        //         takepicture('insertCheckin');
-        //         ev.preventDefault();
-        //     }
-        // }, false);
-
-        // checkout.addEventListener('click', function(ev) {
-        //     if (streaming) {
-        //         $timecardID = $('#timecardIDCheckout').val()
-        //         takepicture('insertCheckout', $timecardID);
-        //         ev.preventDefault();
-        //     }
-        // }, false);
-
-        window.addEventListener('focus', function(e) {
-            turnOn(videos)
-        })
-
-        window.addEventListener('blur', function(e) {
-            turnOff(videos)
-        })
-    }
-
-    function turnOn(videos) {
         // camera image acquisition
         navigator.mediaDevices.getUserMedia({ video: true, audio: false })
             .then(stream => {
                 // On success, the video element is set to a camera image and played back.
-                videos.srcObject = stream;
-                videos.play();
+                // const video = document.getElementById('my-video');
+                video.srcObject = stream;
+                video.play();
+                // streaming = true
+                // Save the camera image to a global variable so that it can be returned to the other party when a call comes in.
+                // localStream = stream;
             }).catch(error => {
                 // Outputs error log in case of failure.
                 console.error('mediaDevice.getUserMedia() error:', error);
@@ -67,30 +44,35 @@
                 return;
             });
 
-        videos.addEventListener('canplay', function(ev) {
+        video.addEventListener('canplay', function (ev) {
             if (!streaming) {
-                height = videos.videoHeight
-                width = videos.videoWidth
-                    // Firefox currently has a bug where the height can't be read from
-                    // the video, so we will make assumptions if this happens.
+                height = video.videoHeight
+                width = video.videoWidth
+                // Firefox currently has a bug where the height can't be read from
+                // the video, so we will make assumptions if this happens.
 
                 if (isNaN(height)) {
                     height = 500
                 }
-
                 streaming = true;
             }
         }, false);
-    }
 
-    function turnOff(videos) {
-        videos.pause();
-        videos.src = "";
-        // videos.srcObject.getTracks()[0].stop();
-        videos.srcObject.getTracks().forEach(function(track) {
-            track.stop();
-        });
-        console.log("videos off");
+        checkin.addEventListener('click', function (ev) {
+            if (streaming) {
+                takepicture('insertCheckin');
+                ev.preventDefault();
+            }
+        }, false);
+
+        checkout.addEventListener('click', function (ev) {
+            if (streaming) {
+                $timecardID = $('#timecardIDCheckout').val()
+                takepicture('insertCheckout', $timecardID);
+                ev.preventDefault();
+            }
+        }, false);
+
     }
 
     // Capture a photo by fetching the current contents of the video
@@ -105,19 +87,19 @@
         if (width && height) {
             canvas.width = width;
             canvas.height = height;
-            context.drawImage(videos, 0, 0, width, height);
+            context.drawImage(video, 0, 0, width, height);
 
             var data = canvas.toDataURL('image/png');
 
-            if ($("#currentCoord").val() != "none") {
-                if (type == 'insertCheckin') {
+            if($("#currentCoord").val() != "none"){
+                if(type == 'insertCheckin'){
                     // TODO:^language
                     $('#titleSignModal').html($('#text_check_in').val())
 
-                    $('#CapturePhoto').attr("src", data)
+                    $('#CapturePhoto').attr("src",data)
 
                     // TODO:^language
-                    $("#textSignModal").html($('#text_check_in_successfully').val() + '<br>' + $('#text_time_checked_in').val() + '<br>' + moment().format('HH:mm:ss'))
+                    $("#textSignModal").html($('#text_check_in_successfully').val() + '<br>' + $('#text_time_checked_in').val() +'<br>' + moment().format('HH:mm:ss'))
 
                     $('#TimeCheckin').html(moment().format('HH:mm:ss'))
                     $('#TimeCheckout').html('')
@@ -126,18 +108,18 @@
                     // TODO: ^language
                     $('#titleSignModal').html($('#text_check_out').val())
 
-                    $('#CapturePhoto').attr("src", data)
+                    $('#CapturePhoto').attr("src",data)
 
                     // TODO: ^language
-                    $("#textSignModal").html($('#text_check_out_successfully').val() + '<br>' + $('#text_time_checked_out').val() + '<br>' + moment().format('HH:mm:ss'))
+                    $("#textSignModal").html($('#text_check_out_successfully').val() + '<br>' + $('#text_time_checked_out').val() +'<br>' + moment().format('HH:mm:ss'))
 
                     $('#TimeCheckout').html(moment().format('HH:mm:ss'))
                     $('#signModal').modal()
                 }
 
-                setTimeout(function() {
+                setTimeout(function(){
                     $('#signModal').modal('hide')
-                }, 3000)
+                },3000)
 
                 $.ajax({
                     headers: { 'X-CSRF-TOKEN': csrfToken },
@@ -149,17 +131,18 @@
                         coord: $("#currentCoord").val(),
                         timecardID: timecardIDCheckout
                     },
-                    success: function(response) {
+                    success: function (response) {
                         if (response.success) {
                             $("#currentCoord").val('none')
 
                             // insert table Distance
-                            if (type == "insertCheckin") {
+                            if(type == "insertCheckin"){
                                 var data = response.dataStaff
                                 var totalDistance = 0
-                                for (var i = 0; i < data.length - 1; i++) {
-                                    totalDistance += Number(getDistance({ 'lat': data[i].CheckinLocation.split(",")[0], 'lng': data[i].CheckinLocation.split(",")[1] }, { 'lat': data[i + 1].CheckinLocation.split(",")[0], 'lng': data[i + 1].CheckinLocation.split(",")[1] })
-                                        .replaceAll(",", ""))
+                                for(var i = 0; i < data.length - 1; i++){
+                                    totalDistance += Number(getDistance({'lat': data[i].CheckinLocation.split(",")[0], 'lng': data[i].CheckinLocation.split(",")[1]},
+                                                                        {'lat': data[i+1].CheckinLocation.split(",")[0], 'lng': data[i+1].CheckinLocation.split(",")[1]})
+                                                            .replaceAll(",", ""))
 
                                 }
                                 totalDistance = (totalDistance / 1000).toFixed(2)
@@ -170,14 +153,14 @@
                                     data: {
                                         distance: totalDistance
                                     },
-                                    success: function(res) {
+                                    success: function(res){
 
                                     }
                                 })
                             }
                         }
                     },
-                    error: function(res) {
+                    error: function(res){
                         console.log('error')
                         console.log(res)
                     }
@@ -207,7 +190,7 @@
         return commafy(d.toFixed(0)); // returns the distance in meter
     };
 
-    function commafy(num) {
+    function commafy( num ) {
         var str = num.toString().split('.');
         str[0] = str[0].replace(/(\d)(?=(\d{3})+$)/g, '$1,');
         if (str[1]) {
@@ -216,9 +199,8 @@
         return str.join(',');
     }
 
-
-
     // Set up our event listener to run the startup process
     // once loading is complete.
     window.addEventListener('load', startup, false);
 })();
+

@@ -10,10 +10,12 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta content="" name="description" />
     <meta content="" name="author" />
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
-    <!-- <link href="<?php echo $this->Url->build("/",true) ;?>css/style.css?v=3" rel="stylesheet" /> -->
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,500,600,700|Poppins:400,500&amp;display=swap"/>
+
     <?php
+    // echo $this->Html->css('bootstrap.min.css') . PHP_EOL;
     echo $this->Html->css("style-staffs.css?v=" . date('ymdhis')) . PHP_EOL;
+    echo $this->Html->css("icons.css") . PHP_EOL;
     echo $this->Html->script('jquery.min.js') . PHP_EOL;
     ?>
     <script type="text/javascript">
@@ -44,14 +46,12 @@
             <div class="div-left">
 
                 <?php foreach($staffs as $staff):?>
-                    <div class="staff-avatar" data-active="false">
+                    <div class="staff-avatar" data-active="false" data-staffid="<?php echo $staff->StaffID; ?>">
                         <?php if($staff->Image != ""):?> 
                             <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>files/StaffImage/<?php echo $staff->Image?>" /></p>
                         <?php endif; ?>
 
                         <p><?php echo $staff->Name; ?></p>
-
-                        <a href="#"><span></span></a>
                     </div>
                 <?php endforeach;?>
 
@@ -63,14 +63,14 @@
 
                 <div class="headoff">HEAD OFFICE</div>
 
-                <div class="form">
-                    <input type="password" class="w-100" placeholder="Enter password" />
+                <div class="form form-password">
+                    <input type="password" name="Password" class="w-100 input-password" placeholder="Enter password" />
+                    <span class="show-password" data-type="show"><i class="fas fa-eye"></i></span>
                 </div>
 
                 <div class="form">
-                    <button class="w-49 f-l button1">Check in</button><button class="w-49 f-r" onclick="location.href='index.html'">
-                        Check out
-                    </button>
+                    <button class="w-49 f-l button1" id="btnSubmitCheckin">Check in</button>
+                    <button class="w-49 f-r" id="btnSubmitCheckout">Check out</button>
                 </div>
             </div>
 
@@ -82,11 +82,25 @@
             <span style="position: absolute;right: 20px;/* bottom: -10px; */" class="f-r">Copyright © 2020 by Netsurf Vietnam. All Rights Reserved</span>
         </div>
 
-        <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a>
+        <!-- <a href="javascript:;" class="btn btn-icon btn-circle btn-success btn-scroll-to-top fade" data-click="scroll-top"><i class="fa fa-angle-up"></i></a> -->
     </div>
 
+    <!-- START__hidden vars -->
+    <input type="hidden" id="currentCoord" value="none">
+    <p style="display: none;" id="btnInsertCheckin"></p>
+    <p style="display: none;" id="btnInsertCheckout"></p>
+    <input type="hidden" id="staffID" value="">
+    <input type="hidden" id="pwStaff" value="">
+    <canvas id="canvas" style="display: none;"></canvas>
+    <!-- END__hidden_vars -->
+
+    <!-- START__elements -->
+    <?php echo $this->element('Mypage/popup_sign_homepage'); ?>
+    <?php echo $this->element('Mypage/popup_look_camera_homepage'); ?>
+    <!-- END__elements -->
+
     <?php
-    echo $this->Html->script("capture.js") . PHP_EOL;
+    echo $this->Html->script('bootstrap.bundle.min.js') . PHP_EOL;
     echo $this->Html->script("bootstrap-datepicker.min.js") . PHP_EOL;
     echo $this->Html->script("bootstrap-timepicker.js") . PHP_EOL;
     echo $this->Html->script("plugins/bootstrap-daterangepicker/daterangepicker.js") . PHP_EOL;
@@ -106,7 +120,8 @@
 
     <!-- APP -->
     <?php
-    echo $this->Html->script("home.js") . PHP_EOL;
+    echo $this->Html->script("user-common.js") . PHP_EOL;
+    echo $this->Html->script("user-home.js") . PHP_EOL;
     ?>
 
     <script>
