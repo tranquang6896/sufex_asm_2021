@@ -49,6 +49,7 @@ class ScheduleController extends AppController
         $this->loadModel('TBLTImageReport');
         $this->loadModel('TBLTReport');
         $this->loadModel('TBLTTimeCard');
+        $this->loadModel('TBLMItem');
 
         $this->viewBuilder()->setLayout('admin');
         $this->set('roll', 'admin');
@@ -137,31 +138,31 @@ class ScheduleController extends AppController
         $staffID = $this->getRequest()->getData('staffID');
         $staff = $this->TBLMStaff->findByStaffID($staffID);
         $data = $staff->toArray();
-        $data['AreaName'] = "";
-        // get areas
-        if(strpos($data['Area'], ",") !== false){ //if is array
-            $areas = explode(",",$data['Area']);
-            $last = (key(array_slice($areas, -1, 1, true)));
-            foreach($areas as $index=>$value){
-                $area = $this->TBLMArea->findByAreaID(trim($value));
-                if($index != $last){
-                    $data['AreaName'] .= $area->Name . ", ";
-                } else {
-                    $data['AreaName'] .= $area->Name;
-                }
-            }
-        } else { //if only one string
-            $area = $this->TBLMArea->findByAreaID($data['Area']);
-            $data['AreaName'] = $area->Name;
-        }
+        // $data['AreaName'] = "";
+        // // get areas
+        // if(strpos($data['Area'], ",") !== false){ //if is array
+        //     $areas = explode(",",$data['Area']);
+        //     $last = (key(array_slice($areas, -1, 1, true)));
+        //     foreach($areas as $index=>$value){
+        //         $area = $this->TBLMArea->findByAreaID(trim($value));
+        //         if($index != $last){
+        //             $data['AreaName'] .= $area->Name . ", ";
+        //         } else {
+        //             $data['AreaName'] .= $area->Name;
+        //         }
+        //     }
+        // } else { //if only one string
+        //     $area = $this->TBLMArea->findByAreaID($data['Area']);
+        //     $data['AreaName'] = $area->Name;
+        // }
         
         // get region South, North, Middle
-        $NAME_REGION = [
-            "S" => "South",
-            "N" => "North",
-            "M" => "Middle"
-        ];
-        $data['RegionName'] = $NAME_REGION[$data['Region']]; 
+        // $NAME_REGION = [
+        //     "S" => "South",
+        //     "N" => "North",
+        //     "M" => "Middle"
+        // ];
+        // $data['RegionName'] = $NAME_REGION[$data['Region']]; 
         $result = [
             'success' => 1,
             'data' => $data
@@ -188,6 +189,37 @@ class ScheduleController extends AppController
         $response = [
             'result' => 'success',
         ];
+        return $this->response->withType('application/json')->withStringBody(json_encode($response));
+    }
+
+    public function setSendMail(){
+        $response['success'] = 0;
+        $param = $this->getRequest()->getData();
+        // set Alert
+        if(isset($param['alert']) && $param['alert'] != ""){
+            $item = $this->TBLMItem->newEntity();
+            $item->Code = "alert_time";
+            $item->Name = "Alert time send pdf report checkin to mail";
+            $item->Value = $param['alert'];
+            $this->TBLMItem->save($item);
+        }
+        // set Mail receipt 1
+        if(isset($param['mail_1']) && $param['mail_1'] != ""){
+            $item = $this->TBLMItem->newEntity();
+            $item->Code = "mail_receipt_1";
+            $item->Name = "Mail receipt pdf report checkin (1)";
+            $item->Value = $param['mail_1'];
+            $this->TBLMItem->save($item);
+        }
+        // set Mail receipt 2
+        if(isset($param['mail_2']) && $param['mail_2'] != ""){
+            $item = $this->TBLMItem->newEntity();
+            $item->Code = "mail_receipt_2";
+            $item->Name = "Mail receipt pdf report checkin (2)";
+            $item->Value = $param['mail_2'];
+            $this->TBLMItem->save($item);
+        }
+        $response['success'] = 1;
         return $this->response->withType('application/json')->withStringBody(json_encode($response));
     }
 }
