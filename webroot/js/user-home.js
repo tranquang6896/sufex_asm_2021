@@ -11,25 +11,24 @@ $(document).ready(function() {
         document.getElementsByName('Password')[0].type = 'password'
         $("input[name='Password']").val('')
 
-        // toggle
-        if ($(this).attr('data-active') == "false") { $(this).attr('data-active', 'true') } else { $(this).attr('data-active', 'false') }
-        // refresh
-        $('.staff-avatar').each(function() {
-                if ($(this).hasClass("staff-active")) {
-                    $(this).removeClass("staff-active")
-                }
-            })
-            // active
-        if ($(this).attr('data-active') == "true") {
+        if ($(this).hasClass('staff-active')) {
+            $(this).removeClass("staff-active")
+            $('#staffID').val('')
+            $('#pwStaff').val('')
+        } else {
             $(this).addClass("staff-active")
             var staffID = $(this).attr('data-staffid')
                 // set staff
             $('#staffID').val(staffID)
             getPassword(staffID)
-        } else {
-            $('#staffID').val('')
-            $('#pwStaff').val('')
         }
+        var staffid = $(this).attr('data-staffid')
+            // refresh
+        $(".staff-avatar").each(function() {
+            if ($(this).attr('data-staffid') != staffid) {
+                $(this).removeClass("staff-active")
+            }
+        })
     })
 
     // show password
@@ -40,12 +39,14 @@ $(document).ready(function() {
     $('#btnSubmitCheckin').on('click', function(e) {
         e.preventDefault()
         $(this).attr('disabled', true)
-        if (validateForm()) { validateCoordinate("checkin") } else $(this).attr('disabled', false)
+            // if (validateForm()) { validateCoordinate("checkin") } else $(this).attr('disabled', false)
+        if (validateForm()) { validateCheckin() } else $(this).attr('disabled', false)
     })
     $('#btnSubmitCheckout').on('click', function(e) {
         e.preventDefault()
         $(this).attr('disabled', true)
-        if (validateForm()) { validateCoordinate("checkout") } else $(this).attr('disabled', false)
+            // if (validateForm()) { validateCoordinate("checkout") } else $(this).attr('disabled', false)
+        if (validateForm()) { validateCheckout() } else $(this).attr('disabled', false)
     })
 
     // Event click CAPTURE

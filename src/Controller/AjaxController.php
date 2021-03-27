@@ -220,6 +220,7 @@ class AjaxController extends Controller
                 'slong' => "SUBSTRING_INDEX(CheckinLocation, ',', -1)",
                 'checkin' => "CONCAT(DATE_FORMAT(Date, '%m.%d'), ' ', DATE_FORMAT(TimeIn, '%H:%i:%s'))",
                 'checkout' => "CONCAT(DATE_FORMAT(Date, '%m.%d'), ' ', DATE_FORMAT(TimeOut, '%H:%i:%s'))",
+                'timein' => 'TBLTTimeCard.TimeIn',
                 'imgcheckin' => "(select CONCAT(tblTFaceImage.`Source`, Name) From tblTFaceImage where TBLTTimeCard.TimeCardID = tblTFaceImage.TimeCardID AND tblTFaceImage.NAME LIKE '%IN%')",
                 'imgcheckout' => "(select CONCAT(tblTFaceImage.`Source`, Name) From tblTFaceImage where TBLTTimeCard.TimeCardID = tblTFaceImage.TimeCardID AND tblTFaceImage.NAME LIKE '%OUT%')",
             ])

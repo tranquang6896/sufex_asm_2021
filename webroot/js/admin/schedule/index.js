@@ -38,6 +38,11 @@ var load_table = -1
 
 var map;
 
+var sStaffID = ''
+var sCustomerID = ''
+var col
+var dir
+
 var lat = 0
 var long = 0
 var slat = 0
@@ -57,8 +62,8 @@ var table = $('#serverDataTable').DataTable({
         data: function(d) {
             let date_from = $("#datepicker_date").val()
             let date_to = $("#datepicker_date_to").val()
-
-            d.staffIds = $("#multiple-select").val();
+            d.customerIds = sCustomerID
+            d.staffIds = sStaffID
             d.date_from = date_from;
             d.date_to = date_to;
             d.auth = $('#Auth').val()
@@ -91,15 +96,26 @@ var table = $('#serverDataTable').DataTable({
                     "</a>"
             }
         },
-        { "data": "checkin", "sClass": "text-center" },
+        {
+            "data": "checkin",
+            "sClass": "text-center checkin",
+            render: function(data, type, row) {
+                var timein = moment(row.timein).format("HH:mm:ss")
+                var time_request = "08:00:00"
+                var flag_valid = ""
+                if (timein > time_request) {
+                    flag_valid = '<input type="hidden" class="flag-late" value="late" />'
+                } else {
+                    flag_valid = '<input type="hidden" class="flag-late" value="" />'
+                }
+                return flag_valid + row.checkin
+            }
+        },
         { "data": "checkout", "sClass": "text-center" },
         {
             "data": "CustomerName",
             render: function(data, type, row) {
-                return "" +
-                    "<a href=\"javascript:void(0)\" class=\"open-customer\" data-customer=\"" + row.CustomerID + "\">\n" +
-                    "\t" + row.CustomerName + "\n" +
-                    "</a>"
+                return ""
             }
         },
         {
@@ -107,27 +123,7 @@ var table = $('#serverDataTable').DataTable({
             "sClass": "text-center",
             orderable: false,
             render: function(data, type, row) {
-                lat = removeNull(row.lat)
-                long = removeNull(row.long)
-                slat = removeNull(row.slat)
-                slong = removeNull(row.slong)
-                var distance = Number(getDistance({ 'lat': lat, 'lng': long }, { 'lat': slat, 'lng': slong }).replaceAll(",", ""))
-                var color = "#4e73df"
-                if (distance >= 500) {
-                    color = "#ea2d2d"
-                }
-                return "" +
-                    "<a href=\"#\" data-toggle=\"modal\" \n" +
-                    "\tdata-long=\"" + removeNull(row.long) + "\" \n" +
-                    "\tdata-lat=\"" + removeNull(row.lat) + "\" \n" +
-                    "\tdata-CustomerName=\"" + removeNull(row.CustomerName) + "\" \n" +
-                    "\tdata-slong=\"" + removeNull(row.slong) + "\" \n" +
-                    "\tdata-slat=\"" + removeNull(row.slat) + "\" \n" +
-                    "\tdata-StaffName=\"" + removeNull(row.StaffName) + "\" \n" +
-                    "\tclass=\"open-GPS\">\n" +
-                    "\t<i class=\"fas fa-map-marker-alt\" style=\"color:" + color + "\"></i>\n" +
-                    "</a>";
-                // return getDistance({'lat': removeNull(row.lat), 'long':removeNull(row.long)}, {'lat':removeNull(row.slat),'long':removeNull(row.slong)})
+                return ""
             }
         },
         {
@@ -135,12 +131,7 @@ var table = $('#serverDataTable').DataTable({
             "sClass": "text-right",
             orderable: false,
             render: function(data, type, row) {
-                if (getDistance({ 'lat': lat, 'lng': long }, { 'lat': slat, 'lng': slong }) != 'NaN') {
-                    return getDistance({ 'lat': lat, 'lng': long }, { 'lat': slat, 'lng': slong }) + "m"
-                } else {
-                    return ""
-                }
-
+                return ""
             }
         },
         {
@@ -148,23 +139,7 @@ var table = $('#serverDataTable').DataTable({
             "sClass": "text-center",
             orderable: false,
             render: function(data, type, row) {
-                return "" +
-                    "<a href=\"#\" data-toggle=\"modal\" \n" +
-                    "\tdata-timecardid=\"" + removeNull(row.TimecardID) + "\" \n" +
-                    "\tdata-id=\"" + removeNull(row.id) + "\" \n" +
-                    "\tdata-staffid=\"" + removeNull(row.StaffID) + "\" \n" +
-                    "\tdata-staffname=\"" + removeNull(row.StaffName) + "\" \n" +
-                    "\tdata-date=\"" + removeNull(row.date) + "\" \n" +
-                    "\tdata-time=\"" + removeNull(row.time) + "\" \n" +
-                    "\tdata-ftime=\"" + removeNull(row.ftime) + "\" \n" +
-                    "\tdata-customerid=\"" + removeNull(row.CustomerID) + "\" \n" +
-                    "\tdata-customername=\"" + removeNull(row.CustomerName) + "\" \n" +
-                    "\tdata-report=\"" + removeNull(row.Report) + "\" \n" +
-                    "\tdata-imgcheckin=\"" + removeNull(row.imgcheckin) + "\" \n" +
-                    "\tdata-imgcheckout=\"" + removeNull(row.imgcheckout) + "\" \n" +
-                    "\tclass=\"open-AddBookDialog\">\n" +
-                    "\t<i class=\"far fa-edit\"></i>\n" +
-                    "</a>";
+                return ""
             }
         },
         {
@@ -191,6 +166,12 @@ var table = $('#serverDataTable').DataTable({
         }
 
         load_table++
+
+        $('tr .flag-late').each(function() {
+            if ($(this).val() == "late") {
+                $(this).closest("tr").addClass("hl-row")
+            }
+        })
 
         // calcualte distance of staffs
         // var staffs = api.ajax.json().sortedStaffs;
@@ -222,25 +203,42 @@ var table = $('#serverDataTable').DataTable({
 let gps_events = []
 var centerDefault = 10
 jQuery(document).ready(function() {
+    // staff
+    $(".sStaffID").select2({
+        allowClear: true,
+        placeholder: 'Please choose staff',
+        tags: true
+    });
+    $(".sStaffID").on("select2:select", function(e) {
+        sStaffID = e.params.data.id;
+        $('#filterSchedule').click()
+    });
+    $(".sStaffID").on("select2:clear", function(e) {
+        sStaffID = ''
+        $('#filterSchedule').click()
+    });
 
-    // $("#datepicker_date").datepicker({
-    //     format: 'yyyy/mm/dd',
-    //     autoclose: true,
-    //     todayHighlight: true
-
+    // customer
+    // $(".sCustomerID").select2({
+    //     allowClear: true,
+    //     placeholder: 'Please choose customer',
+    //     tags: true
+    // });
+    // $(".sCustomerID").on("select2:select", function(e) {
+    //     sCustomerID = e.params.data.id;
+    //     $('#filterSchedule').click()
+    // });
+    // $(".sCustomerID").on("select2:clear", function(e) {
+    //     sCustomerID = ''
+    //     $('#filterSchedule').click()
     // });
 
+    // TIMEPICKER
     $('#timepicker_alert').datetimepicker({
-            format: 'HH:mm',
-            keepOpen: true
-                // inline: true,
-                // sideBySide: true
-        })
-        // $('#timepicker_alert').click(function() {
-        //     console.log($('.bootstrap-datetimepicker-widget').closest("div").html())
-        // });
+        format: 'HH:mm'
+    });
 
-
+    // date range picker
     setRangeDatepicker.rangeDay('#datepicker_date', '#datepicker_date_to')
 
     $(document).on('click', '#filterSchedule', function() {
@@ -462,6 +460,9 @@ var setRangeDatepicker = (function() {
             })
             .on('click', function() {
                 jQuery(dateFrom).datepicker('update', jQuery(dateFrom).val())
+            })
+            .on('changeDate', function() {
+                $('#filterSchedule').click()
             });
         jQuery(dateTo).datepicker({
                 format: "yyyy/mm/dd",
@@ -484,6 +485,9 @@ var setRangeDatepicker = (function() {
             })
             .on('click', function() {
                 jQuery(dateTo).datepicker('update', jQuery(dateTo).val())
+            })
+            .on('changeDate', function() {
+                $('#filterSchedule').click()
             });
     }
 

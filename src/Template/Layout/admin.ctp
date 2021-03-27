@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Sufex Admin</title>
+    <title>Alsok Admin</title>
     <!-- App favicon -->
     <link rel="shortcut icon" href="<?php echo $this->Url->build('/', true); ?>img/favicon.ico">
     <script async defer src="//maps.googleapis.com/maps/api/js?key=AIzaSyDExlzhnegRnzSZRxMNy-7_a56CYBmXssY&libraries=&v=weekly"></script>
@@ -77,7 +77,7 @@
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex " href="javascript:void(0)">
             <div class="sidebar-brand-icon rotate-n-15">
-                <?php echo $this->Html->image('admin/logo-sufex.png', ['alt' => 'logo']); ?>
+                <?php echo $this->Html->image('admin/alsok-logo.jpg', ['alt' => 'logo']); ?>
             </div>
         </a>
         <hr class="sidebar-divider my-0">
@@ -150,7 +150,7 @@
             <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
                 <!-- Sidebar Toggle (Topbar) -->
-                <h2 class="title">ASM System Ver 1.01 for Sufex</h2>
+                <h2 class="title">ASM System Ver 1.0</h2>
 
                 <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
@@ -188,8 +188,7 @@
         <footer class="sticky-footer bg-white">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
-                  Produced by ALSOK 
-           <span style="float:right; position: absolute;right: 20px;">Copyright © 2020 by Netsurf Vietnam. All Rights Reserved</span> 
+                    <span>Copyright &copy; 2020 by Netsurf Vietnam. All Rights Reserved</span>
                 </div>
             </div>
         </footer>
@@ -262,7 +261,6 @@
 <?php echo $this->Html->script('admin/report.js?v='. date('YmdHis'), ['block' => 'scriptBottom']); ?>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous"></script>
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" />
 
 <!--fetch script at bottom at page-->
 <?= $this->fetch('scriptBottom'); ?>

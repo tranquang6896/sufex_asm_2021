@@ -2,7 +2,7 @@
 
 echo $this->Html->css('calendar/fullcalendar.css', ['block' => 'head-end']) . PHP_EOL;
 echo $this->Html->css('calendar/datepicker.css', ['block' => 'head-end']) . PHP_EOL;
-echo $this->Html->css('bootstrap-datetimepicker.min.css?v='.date('ymdhis'), ['block' => 'head-end']) . PHP_EOL;
+echo $this->Html->css('bootstrap-datetimepicker.min.css?v=' . date('ymdhis'), ['block' => 'head-end']) . PHP_EOL;
 echo $this->Html->css('calendar/jquery-ui.css', ['block' => 'head-end']) . PHP_EOL;
 //echo $this->Html->css('plugins/bootstrap-datepicker/bootstrap-datepicker.min.css', ['block' => 'head-end']) . PHP_EOL;
 echo $this->Html->css('admin/style_schedule.css', ['block' => 'head-end']) . PHP_EOL;
@@ -51,108 +51,6 @@ echo $this->Html->css('admin/style_schedule.css', ['block' => 'head-end']) . PHP
                         <span style="font-size:16px; margin-right:5px">Alert Time</span>
                         <input type="text" class="form-control mr-2" name="timepicker" value="08:00" id="timepicker_alert" size="10" placeholder="">
 
-                        <!-- <div class="bootstrap-datetimepicker-widget dropdown-menu">
-                            <ul class="list-unstyled">
-                                <li class="picker-switch accordion-toggle">
-                                    <table class="table-condensed">
-                                        <tbody>
-                                            <tr></tr>
-                                        </tbody>
-                                    </table>
-                                </li>
-                                <li>
-                                    <div class="timepicker">
-                                        <div class="timepicker-picker">
-                                            <table class="table-condensed">
-                                                <tbody>
-                                                    <tr>
-                                                        <td><a href="#" tabindex="-1" title="Increment Hour" class="btn" data-action="incrementHours"><i class="fa fa-chevron-up"></i></a></td>
-                                                        <td class="separator"></td>
-                                                        <td><a href="#" tabindex="-1" title="Increment Minute" class="btn" data-action="incrementMinutes"><i class="fa fa-chevron-up"></i></a></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><span class="timepicker-hour" data-time-component="hours" title="Pick Hour" data-action="showHours">02</span></td>
-                                                        <td class="separator">:</td>
-                                                        <td><span class="timepicker-minute" data-time-component="minutes" title="Pick Minute" data-action="showMinutes">07</span></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><a href="#" tabindex="-1" title="Decrement Hour" class="btn" data-action="decrementHours"><i class="fa fa-chevron-down"></i></a></td>
-                                                        <td class="separator"></td>
-                                                        <td><a href="#" tabindex="-1" title="Decrement Minute" class="btn" data-action="decrementMinutes"><i class="fa fa-chevron-down"></i></a></td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="timepicker-hours" style="display: none;">
-                                            <table class="table-condensed">
-                                                <tbody>
-                                                    <tr>
-                                                        <td data-action="selectHour" class="hour">00</td>
-                                                        <td data-action="selectHour" class="hour">01</td>
-                                                        <td data-action="selectHour" class="hour">02</td>
-                                                        <td data-action="selectHour" class="hour">03</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td data-action="selectHour" class="hour">04</td>
-                                                        <td data-action="selectHour" class="hour">05</td>
-                                                        <td data-action="selectHour" class="hour">06</td>
-                                                        <td data-action="selectHour" class="hour">07</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td data-action="selectHour" class="hour">08</td>
-                                                        <td data-action="selectHour" class="hour">09</td>
-                                                        <td data-action="selectHour" class="hour">10</td>
-                                                        <td data-action="selectHour" class="hour">11</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td data-action="selectHour" class="hour">12</td>
-                                                        <td data-action="selectHour" class="hour">13</td>
-                                                        <td data-action="selectHour" class="hour">14</td>
-                                                        <td data-action="selectHour" class="hour">15</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td data-action="selectHour" class="hour">16</td>
-                                                        <td data-action="selectHour" class="hour">17</td>
-                                                        <td data-action="selectHour" class="hour">18</td>
-                                                        <td data-action="selectHour" class="hour">19</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td data-action="selectHour" class="hour">20</td>
-                                                        <td data-action="selectHour" class="hour">21</td>
-                                                        <td data-action="selectHour" class="hour">22</td>
-                                                        <td data-action="selectHour" class="hour">23</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="timepicker-minutes" style="display: none;">
-                                            <table class="table-condensed">
-                                                <tbody>
-                                                    <tr>
-                                                        <td data-action="selectMinute" class="minute">00</td>
-                                                        <td data-action="selectMinute" class="minute">05</td>
-                                                        <td data-action="selectMinute" class="minute">10</td>
-                                                        <td data-action="selectMinute" class="minute">15</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td data-action="selectMinute" class="minute">20</td>
-                                                        <td data-action="selectMinute" class="minute">25</td>
-                                                        <td data-action="selectMinute" class="minute">30</td>
-                                                        <td data-action="selectMinute" class="minute">35</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td data-action="selectMinute" class="minute">40</td>
-                                                        <td data-action="selectMinute" class="minute">45</td>
-                                                        <td data-action="selectMinute" class="minute">50</td>
-                                                        <td data-action="selectMinute" class="minute">55</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div> -->
                         <input type="hidden" class="form-control " id="default_timepicker" value="">
 
                         <input type="text" class="form-control mr-2" size="30" placeholder="Email1">
@@ -165,10 +63,10 @@ echo $this->Html->css('admin/style_schedule.css', ['block' => 'head-end']) . PHP
                     <hr />
                     <form class="form-inline" action="#">
                         <div class="form-group  mb-2">
-                            <select id="multiple-select" name="staffIds" class="form-control w-100" place>
-                                <option value="">Please choose staff</option>
+                            <select id="multiple-select" name="staffIds" class="sStaffID form-control " style="width:260px" place>
+                                <option value=""></option>
                                 <?php foreach ($staffIds as $staffId => $value) : ?>
-                                    <option value="<?= $staffId ?>" <?php if (@$params['staffIds'] == $staffId) echo "selected"; ?>><?= $value ?></option>
+                                    <option value="<?= $staffId ?>"><?= $value ?></option>
                                 <?php endforeach ?>
                             </select>
                         </div>
@@ -229,18 +127,18 @@ echo $this->Html->css('admin/style_schedule.css', ['block' => 'head-end']) . PHP
 
 <!-- temp values -->
 <?php
-$col = 2;
+$col = 3;
 $dir = 'desc';
 if (isset($sort)) {
     if (isset($sort['col']) && isset($sort['dir'])) {
         if (strpos($sort['col'], 'ID') !== false) {
-            $col = 0;
-        } else if ($sort['col'] == 'Staff Name') {
             $col = 1;
-        } else if ($sort['col'] == 'Customer Name') {
-            $col = 4;
-        } else {
+        } else if ($sort['col'] == 'Staff Name') {
             $col = 2;
+        } else if ($sort['col'] == 'Customer Name') {
+            $col = 5;
+        } else {
+            $col = 3;
         }
         $dir = $sort['dir'];
     }

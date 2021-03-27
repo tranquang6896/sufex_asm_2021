@@ -109,57 +109,58 @@
 
             var data = canvas.toDataURL('image/png');
 
-            if ($("#currentCoord").val() != "none") {
-
-
-                if (type == 'insertCheckin') {
-                    $('#titleSignModal').html("Check In")
-                    $('#CapturePhoto').attr("src", data)
-                    $("#textSignModal").html("Check In successfully!" + '<br>' + "Check-in Time" + '<br>' + moment().format('HH:mm:ss'))
-                    $('#TimeCheckin').html(moment().format('HH:mm:ss'))
-                    $('#TimeCheckout').html('')
-                    $('#signModal').modal()
-                        // opacity window
-                    $('.modal-backdrop').addClass("opacity-window")
-                } else {
-                    $('#titleSignModal').html("Check Out")
-                    $('#CapturePhoto').attr("src", data)
-                    $("#textSignModal").html("Check Out successfully!" + '<br>' + "Check-out Time" + '<br>' + moment().format('HH:mm:ss'))
-                    $('#TimeCheckout').html(moment().format('HH:mm:ss'))
-                    $('#signModal').modal()
-                        // opacity window
-                    $('.modal-backdrop').addClass("opacity-window")
-                }
-
-                setTimeout(function() {
-                    $('#signModal').modal('hide')
-                }, 3000)
-
-                $.ajax({
-                    headers: { 'X-CSRF-TOKEN': csrfToken },
-                    type: 'POST',
-                    url: baseUrl + 'homepage/' + type,
-                    data: {
-                        img: data,
-                        coord: $("#currentCoord").val(),
-                        staffid: $('#staffID').val()
-                    },
-                    success: function(response) {
-                        if (response.success == 1) {
-                            $("#currentCoord").val('none')
-                        } else {
-                            console.log(response)
-                        }
-                    },
-                    error: function(res) {
-                        console.log('error')
-                        console.log(res)
-                    }
-                })
-
+            if (type == 'insertCheckin') {
+                $('#titleSignModal').html("Check In")
+                $('#CapturePhoto').attr("src", data)
+                $("#textSignModal").html("Check In successfully!" + '<br>' + "Check-in Time" + '<br>' + moment().format('HH:mm:ss'))
+                $('#TimeCheckin').html(moment().format('HH:mm:ss'))
+                $('#TimeCheckout').html('')
+                $('#signModal').modal()
+                    // opacity window
+                $('.modal-backdrop').addClass("opacity-window")
             } else {
-                alert("Please enable location services on your device !")
+                $('#titleSignModal').html("Check Out")
+                $('#CapturePhoto').attr("src", data)
+                $("#textSignModal").html("Check Out successfully!" + '<br>' + "Check-out Time" + '<br>' + moment().format('HH:mm:ss'))
+                $('#TimeCheckout').html(moment().format('HH:mm:ss'))
+                $('#signModal').modal()
+                    // opacity window
+                $('.modal-backdrop').addClass("opacity-window")
             }
+
+            setTimeout(function() {
+                $('#signModal').modal('hide')
+            }, 3000)
+
+            $.ajax({
+                headers: { 'X-CSRF-TOKEN': csrfToken },
+                type: 'POST',
+                url: baseUrl + 'homepage/' + type,
+                data: {
+                    img: data,
+                    // coord: $("#currentCoord").val(),
+                    coord: "",
+                    staffid: $('#staffID').val()
+                },
+                success: function(response) {
+                    if (response.success == 1) {
+                        // clear password
+                        $('.show-password').html('<i class="fas fa-eye"></i>')
+                        $('.show-password').data('type', 'show')
+                        pass = $("input[name='Password']").val()
+                        document.getElementsByName('Password')[0].type = 'password'
+                        $("input[name='Password']").val('')
+                            // end__clear
+                    } else {
+                        console.log(response)
+                    }
+                },
+                error: function(res) {
+                    console.log('error')
+                    console.log(res)
+                }
+            })
+
         } else {
             console.log('error')
         }
