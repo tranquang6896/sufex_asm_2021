@@ -48,13 +48,13 @@ echo $this->Html->css('admin/style_schedule.css', ['block' => 'head-end']) . PHP
                 <div>
                     <form class="form-inline" action="#">
 
-                        <span style="font-size:16px; margin-right:5px">Alert Time</span>
+                        <span style="font-size:16px; margin-right:5px" >Alert Time</span>
                         <input type="text" class="form-control mr-2" name="timepicker" value="08:00" id="timepicker_alert" size="10" placeholder="">
 
                         <input type="hidden" class="form-control " id="default_timepicker" value="">
 
-                        <input type="text" class="form-control mr-2" size="30" placeholder="Email1">
-                        <input type="text" class="form-control mr-2" size="30" placeholder="Email2">
+                        <input type="text" class="form-control mr-2" size="30" placeholder="Email1" id="mail1">
+                        <input type="text" class="form-control mr-2" size="30" placeholder="Email2" id="mail2">
                         <button type="button" id="submitAlert" class="rounded-pill btn btn-primary ">
                             Submit
                         </button>
@@ -80,7 +80,7 @@ echo $this->Html->css('admin/style_schedule.css', ['block' => 'head-end']) . PHP
                             <input type="text" class="form-control" value="<?= @$params['datepicker'] ?>" name="datepicker" id="datepicker_date_to" size="10" placeholder="Date">
                             <input type="hidden" class="form-control" id="default_to_datepicker" value="">
                         </div>
-                        <button type="button" id="filterSchedule" class="rounded-pill btn btn-primary mb-2">
+                        <button type="button" id="filterSchedule" class="rounded-pill btn btn-primary mb-2" hidden>
                             Filter
                         </button>
                     </form>

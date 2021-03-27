@@ -30,6 +30,11 @@ $('.modal-content').on('resize', function() {
         // console.log()
 })
 
+$(document).on('click', '.img-zoom', function() {
+    $('#venoboxImage').attr('src', $(this).attr('src'))
+    $('#viewImageModal').modal()
+})
+
 var rad = function(x) {
     return x * Math.PI / 180;
 };
@@ -234,13 +239,55 @@ jQuery(document).ready(function() {
     // });
 
     // TIMEPICKER
-    $('#timepicker_alert').datetimepicker({
-        format: 'HH:mm'
-    });
+    $('#timepicker_alert')
+        .datetimepicker({ format: 'HH:mm' })
+        .keypress(function(event) { event.preventDefault(); })
+        .keydown(false)
 
     // date range picker
     setRangeDatepicker.rangeDay('#datepicker_date', '#datepicker_date_to')
 
+    $('#submitAlert').on('click', function(e) {
+        e.preventDefault()
+
+
+        var valid = validateFormSendMail()
+
+        if (valid == false) return false
+
+        $(this).attr("disabled", true)
+
+        $.ajax({
+            headers: { 'X-CSRF-TOKEN': __csrfToken },
+            url: __baseUrl + 'admin/schedule/setSendMail',
+            type: 'POST',
+            data: {
+                'alert': $("#timepicker_alert").val(),
+                'mail_1': $("#mail1").val(),
+                'mail_2': $("#mail2").val()
+            },
+            success: function(response) {
+                $(this).attr("disabled", false)
+                if (response.success == 1) {
+                    swal({
+                        title: "",
+                        text: "Submited successfully !",
+                        icon: "success"
+                    })
+                } else {
+                    console.log(response)
+                }
+            },
+            error: function(response) {
+                $(this).attr("disabled", false)
+                console.log(response)
+            }
+        })
+
+        $(this).attr("disabled", false)
+        return false
+
+    })
     $(document).on('click', '#filterSchedule', function() {
         load_table = 0
         showMapByStaff()
@@ -269,9 +316,14 @@ jQuery(document).ready(function() {
                     $('#modalInfoStaff #StaffID').html(data.StaffID)
                     $('#modalInfoStaff #Name').html(data.Name)
                     $('#modalInfoStaff #Position').html(data.Position)
-                    $('#modalInfoStaff #InfoArea').html(data.AreaName)
-                    $('#modalInfoStaff #InfoTitle').html(data.Title)
-                    $('#modalInfoStaff #InfoRegion').html(data.RegionName)
+                    if (data.Image && data.Image != "") {
+                        var img = '<img src="' + __baseUrl + "files/StaffImage/" + data.Image + '" class="img-zoom" style="width:150px">'
+                        $('#modalInfoStaff #InfoArea').html(img)
+
+                    }
+                    // $('#modalInfoStaff #InfoArea').html(data.AreaName)
+                    // $('#modalInfoStaff #InfoTitle').html(data.Title)
+                    // $('#modalInfoStaff #InfoRegion').html(data.RegionName)
                     $('#modalInfoStaff').modal('show')
                 }
             }
@@ -518,6 +570,64 @@ var setRangeDatepicker = (function() {
         validDay: validDay
     }
 })();
+
+function validateFormSendMail() {
+    // ==> validate mail
+    var valid_mail = 0
+    var filled_mail = 0
+        // mail 1
+        // var valid_mail1 = ValidateEmail()
+    var mail1 = $("#mail1").val()
+    if (mail1 != "") {
+        ++filled_mail
+        if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(mail1)) {
+            ++valid_mail
+        } else {
+            alert("You have entered input Email1 an invalid email address!")
+            return (false)
+        }
+    }
+
+    var mail2 = $("#mail2").val()
+    if (mail2 != "") {
+        ++filled_mail
+        if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(mail2)) {
+            ++valid_mail
+        } else {
+            alert("You have entered input Email1 an invalid email address!")
+            return (false)
+        }
+    }
+
+    if (filled_mail == 0) {
+        alert("Please filled email!")
+        return false
+    }
+
+    // if (valid_mail1) {++valid_mail }
+    // // mail 2
+    // var valid_mail2 = ValidateEmail($("#mail1").val())
+    // if (valid_mail2) {++valid_mail }
+    // ==> validate alert
+    var alert_time = $("#timepicker_alert").val()
+
+    if (alert_time == "") {
+        alert("Please filled alert time !")
+        return false
+    }
+
+    return true
+}
+
+function ValidateEmail(mail) {
+    if (mail != "") {
+        if (/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(mail)) {
+            return (true)
+        }
+        alert("You have entered an invalid email address!")
+        return (false)
+    }
+}
 
 function getDistance(p1, p2) {
     var R = 6378137; // Earth’s mean radius in meter

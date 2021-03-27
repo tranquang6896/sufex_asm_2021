@@ -16,12 +16,13 @@ p {
     line-height: 1;
     color: #6e707e;
 }
+
 </style>
 
 <div class="modal fade" id="modalInfoStaff" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-body">
+            <div class="modal-body" style="min-height: 270px;">
                 <div class="form-group row">
                     <div class="col-sm-12 row d-flex align-items-center mb-1 input-text">
                         <div class="col-sm-3">
@@ -49,13 +50,13 @@ p {
                     </div>
                     <div class="col-sm-12 row d-flex align-items-center mb-1">
                         <div class="col-sm-3">
-                            <label for="Area">Area:</label>
+                            <label for="Area">Face Image:</label>
                         </div>
                         <div class="col-sm-9">
                             <span id="InfoArea" class="form-text form-popup"></span>
                         </div>
                     </div>
-                    <div class="col-sm-12 row d-flex align-items-center mb-1">
+                    <!-- <div class="col-sm-12 row d-flex align-items-center mb-1">
                         <div class="col-sm-3">
                             <label for="Title">Title:</label>
                         </div>
@@ -70,7 +71,7 @@ p {
                         <div class="col-sm-9">
                             <span id="InfoRegion" class="form-text form-popup"></span>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <div class="modal-footer">
