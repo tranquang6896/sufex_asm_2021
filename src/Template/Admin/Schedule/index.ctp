@@ -49,12 +49,12 @@ echo $this->Html->css('admin/style_schedule.css', ['block' => 'head-end']) . PHP
                     <form class="form-inline" action="#">
 
                         <span style="font-size:16px; margin-right:5px" >Alert Time</span>
-                        <input type="text" class="form-control mr-2" name="timepicker" value="08:00" id="timepicker_alert" size="10" placeholder="">
+                        <input type="text" class="form-control mr-2" name="timepicker" value="<?php if(isset($params['timepicker'])) echo $params['timepicker']; ?>" id="timepicker_alert" size="10" placeholder="">
 
                         <input type="hidden" class="form-control " id="default_timepicker" value="">
 
-                        <input type="text" class="form-control mr-2" size="30" placeholder="Email1" id="mail1">
-                        <input type="text" class="form-control mr-2" size="30" placeholder="Email2" id="mail2">
+                        <input type="text" class="form-control mr-2" size="30" placeholder="Email1" id="mail1" value="<?php if(isset($params['mail_receipt_1'])) echo $params['mail_receipt_1']; ?>">
+                        <input type="text" class="form-control mr-2" size="30" placeholder="Email2" id="mail2" value="<?php if(isset($params['mail_receipt_2'])) echo $params['mail_receipt_2']; ?>">
                         <button type="button" id="submitAlert" class="rounded-pill btn btn-primary ">
                             Submit
                         </button>
@@ -156,6 +156,8 @@ if (isset($sort)) {
 <?php echo $this->element('Admin/popup_event_admin'); ?>
 <!-- popup for face -->
 <?php echo $this->element('Admin/popup_face_admin'); ?>
+<!-- popup note mail -->
+<?php echo $this->element('Admin/popup_note_mail'); ?>
 
 <?php
 echo $this->Html->script('calendar/moment.min.js', ['block' => 'scriptBottom']);

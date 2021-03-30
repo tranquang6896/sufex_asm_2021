@@ -269,12 +269,13 @@ jQuery(document).ready(function() {
             success: function(response) {
                 $(this).attr("disabled", false)
                 if (response.success == 1) {
-                    swal({
-                        title: "",
-                        text: "Submited successfully !",
-                        icon: "success"
-                    })
+                    $('#noteMailModal').modal()
                 } else {
+                    swal({
+                        title: "Submited failed!",
+                        text: "Please reload page and try again. Thank you! ",
+                        icon: "error"
+                    })
                     console.log(response)
                 }
             },

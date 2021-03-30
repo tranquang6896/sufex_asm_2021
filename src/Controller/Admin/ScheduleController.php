@@ -79,6 +79,20 @@ class ScheduleController extends AppController
         $this->set('StaffID', $staffId);
 
         $params['datepicker'] = date('Y/m/d');
+        $alert_time = $this->TBLMItem->find()->where(['Code' => 'alert_time'])->first();
+        if($alert_time){
+            $params['timepicker'] = $alert_time->Value;
+        } else {
+            $params['timepicker'] = "08:00"; //default
+        }
+        $mail_receipt_1 = $this->TBLMItem->find()->where(['Code' => 'mail_receipt_1'])->first();
+        if($mail_receipt_1){
+            $params['mail_receipt_1'] = $mail_receipt_1->Value;
+        }
+        $mail_receipt_2 = $this->TBLMItem->find()->where(['Code' => 'mail_receipt_2'])->first();
+        if($mail_receipt_2){
+            $params['mail_receipt_2'] = $mail_receipt_2->Value;
+        }
         $this->set('params', $params);
     }
 
@@ -197,23 +211,41 @@ class ScheduleController extends AppController
         $param = $this->getRequest()->getData();
         // set Alert
         if(isset($param['alert']) && $param['alert'] != ""){
-            $item = $this->TBLMItem->newEntity();
+            // check for insert or update
+            $item_alert = $this->TBLMItem->exists(['Code' => 'alert_time']);
+            if($item_alert){
+                $item = $this->TBLMItem->find()->where(['Code' => 'alert_time'])->first();
+            } else {
+                $item = $this->TBLMItem->newEntity();
+            }
+
             $item->Code = "alert_time";
             $item->Name = "Alert time send pdf report checkin to mail";
             $item->Value = $param['alert'];
             $this->TBLMItem->save($item);
         }
         // set Mail receipt 1
-        if(isset($param['mail_1']) && $param['mail_1'] != ""){
-            $item = $this->TBLMItem->newEntity();
+        if(isset($param['mail_1'])){
+            $item_mail_1 = $this->TBLMItem->exists(['Code' => 'mail_receipt_1']);
+            if($item_mail_1){
+                $item = $this->TBLMItem->find()->where(['Code' => 'mail_receipt_1'])->first();
+            } else {
+                $item = $this->TBLMItem->newEntity();
+            }
             $item->Code = "mail_receipt_1";
             $item->Name = "Mail receipt pdf report checkin (1)";
             $item->Value = $param['mail_1'];
             $this->TBLMItem->save($item);
+            
         }
         // set Mail receipt 2
-        if(isset($param['mail_2']) && $param['mail_2'] != ""){
-            $item = $this->TBLMItem->newEntity();
+        if(isset($param['mail_2'])){
+            $item_mail_2 = $this->TBLMItem->exists(['Code' => 'mail_receipt_2']);
+            if($item_mail_2){
+                $item = $this->TBLMItem->find()->where(['Code' => 'mail_receipt_2'])->first();
+            } else {
+                $item = $this->TBLMItem->newEntity();
+            }
             $item->Code = "mail_receipt_2";
             $item->Name = "Mail receipt pdf report checkin (2)";
             $item->Value = $param['mail_2'];

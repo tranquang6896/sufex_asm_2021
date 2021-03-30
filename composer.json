@@ -15,6 +15,7 @@
         "friendsofcake/authenticate": "dev-cake3",
         "mobiledetect/mobiledetectlib": "2.*",
         "nojimage/cakephp-remember-me": "^2.4",
+        "phpmailer/phpmailer": "^6.3",
         "stichoza/google-translate-php": "^3.2"
     },
     "require-dev": {

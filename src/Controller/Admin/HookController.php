@@ -3,6 +3,8 @@
 namespace App\Controller\Admin;
 
 use Cake\Event\Event;
+use Cake\Log\Log;
+use Cake\ORM\TableRegistry;
 use Dompdf\Dompdf;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -18,11 +20,21 @@ class HookController extends AppController
         $this->loadModel('TBLMStaff');
         $this->loadModel('TBLMItem');
         $this->loadModel('TBLTSendMail');
+
+        Log::setConfig('SENDMAIL', [
+            'className' => 'File',
+            'path' => PATH_LOG_SEND,
+            'levels' => [],
+            'scopes' => ['SENDMAIL'],
+            'file' => FILE_LOG_SEND,
+        ]);
     }
 
     public function beforeFilter(Event $event)
     {
         parent::beforeFilter($event);
+
+        $this->Auth->allow(['sendReportCheckin']);
     }
 
     public function beforeRender(Event $event)
@@ -39,6 +51,15 @@ class HookController extends AppController
 
     public function sendReportCheckin()
     {
+        // check have sended ?
+        // $sended = $this->TBLTSendMail
+        //     ->exists([
+        //         'Date' => date("Y-m-d"),
+        //         'Result' => 'success'
+        //     ]);
+
+        // if($sended) { exit; }
+
         $alert = $this->TBLMItem->find()
             ->where([
                 'Code' => 'alert_time',
@@ -59,23 +80,13 @@ class HookController extends AppController
             ->first();
             
         $allow = false;
-        if ($alert['Value'] &&  ($mail1['Value'] || $mail2['Value'])) {
-            
-            // $alert = date("H:i", strtotime($alert));
+        if (isset($alert['Value']) &&  (isset($mail1['Value']) || isset($mail2['Value']))) {
             if ($alert['Value'] == date("H:i")) {
                 $allow = true;
-            } else {
-                print($alert['Value']);
-            }
-            // print($alert['Value'] . "<br/>");
-            // print(date("H:i"));
+            } 
         }
 
-        // print($alert . "<br/>");
-        // print($mail1 . "<br/>");
-        // print($mail2 . "<br/>");
-
-        // tmp
+        // debug
         // $allow = true;
 
         if ($allow) {
@@ -100,7 +111,8 @@ class HookController extends AppController
             $data["not_come"] = $this->TBLMStaff->find()
                 ->where([
                     "StaffID NOT IN (SELECT StaffID FROM tblTTimeCard WHERE Date ='" . date("Y-m-d") . "')",
-                    "Position LIKE '%Leader%'"
+                    "Position LIKE '%Leader%'",
+                    "FlagDelete = 0"
                 ])
                 ->order(['StaffID' => 'ASC'])
                 ->toArray();
@@ -108,6 +120,9 @@ class HookController extends AppController
             // echo '<pre>';
             // var_dump($data);
             // echo '</pre>';
+            // exit;
+
+
 
             $view = $builder->build(compact('data'));
             $content = $view->render();
@@ -127,32 +142,64 @@ class HookController extends AppController
             if (!file_exists($path)) {
                 mkdir($path);
             }
+
             $fileNameExport = "ASM SYSTEM " . date("Ymd") . " (" . date("D") . ") " . date("Hi") . ".pdf";
             $output = $path . "/" . $fileNameExport;
 
             $file = $dompdf->output();
             file_put_contents($output, $file);
 
+            // debug
+            // exit;
 
-            $result['success'] = 1;
+            $result_sended = self::__sendFileToMail($output, $fileNameExport, $mail1['Value'], $mail2['Value']);
+            // mails receipt
+            $mails_receipt = "";
+            if ($mail1['Value']) {
+                $mails_receipt .= $mail1['Value'];
+            }
 
-            self::sendFileToMail($output, $fileNameExport, $mail1['Value'], $mail2['Value']);
+            if ($mail2['Value']) {
+                $mails_receipt .= ", " . $mail2['Value'];
+            }
+            // result
+            $result = "";
+            if(isset($result_sended['success']) && $result_sended['success'] == 1){
+                $result = "success";
+            } else {
+                $result = "fail";
+            }
+
+            // ==> SAVE RESULT TO DB
+            $sended = TableRegistry::getTableLocator()->get('TBLTSendMail')->newEntity();
+            $sended->Date = date("Y-m-d");
+            $sended->Time = date("H:i");
+            $sended->ToEmail = $mails_receipt;
+            $sended->FileSend = $fileNameExport;
+            $sended->Result = $result;
+            TableRegistry::getTableLocator()->get('TBLTSendMail')->save($sended);
+
+            // ==> WRITE LOG
+            $content = 
+                "Date: ".date("Y-m-d") . "\n" .
+                "Time: ".date("H:i") . "\n" . 
+                "To emails: " . $mails_receipt ."\n".
+                "Filename attachment: ".$fileNameExport . "\n" .
+                "Result: ".$result . "\n \n";
+            Log::info($content, ['scope' => ['SENDMAIL']]);
         }
-        // $result['pdf'] = "excel/output/" . $fileNameExport;
-        // print("Not sended");
         exit;
     }
 
-    public static function sendFileToMail($file, $filename, $mail1, $mail2)
+    public static function __sendFileToMail($file, $filename, $mail1, $mail2)
     {
+        $result['success'] = 0;
+
         try {
             $mail = new PHPMailer;
 
             $mail->setFrom('nsv@vps169121.dotvndns.com', 'Sufex ASM System');
-            // $mail->FromName = "";
 
-
-            // $mail->addAddress("info.website.server@gmail.com");
             if ($mail1) {
                 $mail->addAddress($mail1);
             }
@@ -163,87 +210,22 @@ class HookController extends AppController
 
             //Provide file path and name of the attachments
             $mail->addAttachment($file, $filename);
-            // $mail->addAttachment("images/profile.png"); //Filename is optional
             // $mail->AddReplyTo( 'nsv@vps169121.dotvndns.com', 'Admin' );
 
             $mail->isHTML(true);
 
             $mail->Subject = 'Report checkin ' . date("Y/m/d");
             $mail->Body = '<h1>File report</h1>';
-            // $mail->AltBody = 'File report';
+            // $mail->AltBody = 'Plain text';
 
-            $mail->send();
-            echo "Message has been sent successfully";
+            if($mail->send()){
+                echo "Message has been sent successfully";
+                $result['success'] = 1;
+            }
         } catch (\Exception $e) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         }
 
-        // // mail 2
-
-        // $mail2 = new PHPMailer;
-
-        // // $mail2->From = "sufex-asm@vps169121.dotvndns.com";
-        // $mail2->FromName = "Sufex ASM System";
-
-        // $mail2->addAddress("tranquang6896@gmail.com");
-
-        // //Provide file path and name of the attachments
-        // $mail2->addAttachment($file, $filename);
-        // // $mail2->addAttachment("images/profile.png"); //Filename is optional
-
-        // $mail2->isHTML(true);
-
-        // $mail2->Subject = "Subject Text";
-        // $mail2->Body = "<i>Mail body in HTML</i>";
-        // $mail2->AltBody = "This is the plain text version of the email content";
-
-        // try {
-        //     $mail2->send();
-        //     echo "Message has been sent successfully 2";
-        // } catch (\Exception $e) {
-        //     echo "Mailer Error: " . $mail2->ErrorInfo;
-        // }
-
-
-
-        // // just edit these 
-        // $to          = "tran681796@gmail.com"; // addresses to email pdf to
-        // $from        = "Sufex ASM System"; // address message is sent from
-        // $subject     = "Your PDF email subject"; // email subject
-        // $body        = "<p>The PDF is attached.</p>"; // email body
-        // $pdfLocation = $file; // file location
-        // $pdfName     = $filename; // pdf file name recipient will get
-        // $filetype    = "application/pdf"; // type
-
-        // // creates headers and mime boundary
-        // $eol = PHP_EOL;
-        // $semi_rand     = md5(time());
-        // $mime_boundary = "==Multipart_Boundary_$semi_rand";
-        // $headers       = "MIME-Version: 1.0$eol" .
-        //     "Content-Type: multipart/mixed;$eol boundary=\"$mime_boundary\"";
-
-        // // add html message body
-        // $message = "--$mime_boundary$eol" .
-        //     "Content-Type: text/html; charset=\"iso-8859-1\"$eol" .
-        //     "Content-Transfer-Encoding: 7bit$eol$eol$body$eol";
-
-        // // fetches pdf
-        // $file = fopen($pdfLocation, 'rb');
-        // $data = fread($file, filesize($pdfLocation));
-        // fclose($file);
-        // $pdf = chunk_split(base64_encode($data));
-
-        // // attaches pdf to email
-        // $message .= "--$mime_boundary$eol" .
-        //     "Content-Type: $filetype;$eol name=\"$pdfName\"$eol" .
-        //     "Content-Disposition: attachment;$eol filename=\"$pdfName\"$eol" .
-        //     "Content-Transfer-Encoding: base64$eol$eol$pdf$eol--$mime_boundary--";
-
-        // // Sends the email
-        // if (mail($to, $subject, $message, $headers)) {
-        //     echo "The email was sent.";
-        // } else {
-        //     echo "There was an error sending the mail.";
-        // }
+        return $result;
     }
 }
