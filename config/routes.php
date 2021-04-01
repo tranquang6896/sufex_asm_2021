@@ -65,7 +65,7 @@ Router::scope('/', function (RouteBuilder $routes) {
     $routes->connect('/admin', ['prefix' => 'admin', 'controller' => 'Staff', 'action' => 'index']);
     $routes->connect('/admin/face-image/gallery-:folderid',['prefix' => 'admin', 'controller' => 'FaceImage', 'action' => 'gallery'])
         ->setPass(['folderid']);
-    $routes->connect('/', ['controller' => 'Mypage', 'action' => 'index']);
+    $routes->connect('/', ['controller' => 'Homepage', 'action' => 'index']);
     $routes->connect('/location/lat-:lat/long-:long', ['controller' => 'Mypage', 'action' => 'location'])->setPass(['lat', 'long']);
 
     /*

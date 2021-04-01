@@ -77,7 +77,7 @@
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex " href="javascript:void(0)">
             <div class="sidebar-brand-icon rotate-n-15">
-                <?php echo $this->Html->image('admin/alsok-logo.jpg', ['alt' => 'logo']); ?>
+                <?php echo $this->Html->image('admin/logo-sufex.png', ['alt' => 'logo']); ?>
             </div>
         </a>
         <hr class="sidebar-divider my-0">

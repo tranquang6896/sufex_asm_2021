@@ -103,10 +103,10 @@ echo $this->Html->css('admin/style_schedule.css', ['block' => 'head-end']) . PHP
                                 <th>Name</th>
                                 <th>Check In</th>
                                 <th>Check Out</th>
-                                <th>Customer Name</th>
+                                <!-- <th>Customer Name</th>
                                 <th>GPS</th>
                                 <th>Distance</th>
-                                <th>Report</th>
+                                <th>Report</th> -->
                                 <th>Face Image</th>
                             </tr>
                         </thead>
@@ -135,8 +135,6 @@ if (isset($sort)) {
             $col = 1;
         } else if ($sort['col'] == 'Staff Name') {
             $col = 2;
-        } else if ($sort['col'] == 'Customer Name') {
-            $col = 5;
         } else {
             $col = 3;
         }
