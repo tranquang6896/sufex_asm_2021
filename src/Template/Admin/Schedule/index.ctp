@@ -32,6 +32,35 @@ echo $this->Html->css('admin/style_schedule.css', ['block' => 'head-end']) . PHP
     .Staff-ID:hover .tooltip-distance {
         display: block;
     }
+    .label-alert{
+        margin-right: 5px !important;
+    }
+    .timepicker-alert{
+        width: 70px !important;
+    }
+    .email1{
+        width: 270px !important; 
+    }
+    .email2{
+        width: 270px !important;
+    }
+    .fs-14{
+        font-size: 14px !important;
+    }
+    .btn-form{
+        line-height: 15px;
+    }
+
+    .h-35{
+        height: 35px !important;
+    }
+    .select2-container span{
+        font-size: 14px !important;
+    }
+    .form-top{
+        width: 430px;
+        float:left;
+    }
 </style>
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.standalone.min.css" integrity="sha512-TQQ3J4WkE/rwojNFo6OJdyu6G8Xe9z8rMrlF9y7xpFbQfW5g8aSWcygCQ4vqRiJqFsDsE1T6MoAOMJkFXlrI9A==" crossorigin="anonymous" />
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDExlzhnegRnzSZRxMNy-7_a56CYBmXssY&libraries=&v=weekly"></script>
@@ -46,24 +75,25 @@ echo $this->Html->css('admin/style_schedule.css', ['block' => 'head-end']) . PHP
 
             <div class="col-md-12 col-sm-10 mx-auto text-center form p-8">
                 <div>
-                    <form class="form-inline" action="#">
-
-                        <span style="font-size:16px; margin-right:5px" >Alert Time</span>
-                        <input type="text" class="form-control mr-2" name="timepicker" value="<?php if(isset($params['timepicker'])) echo $params['timepicker']; ?>" id="timepicker_alert" size="10" placeholder="">
-
+				<div style="width:100%">
+                    <form class="form-inline form-top" action="#">
+                        <span style="font-size:14px; margin-right:5px">Alert Time</span>
+                        <input type="text" onkeypress='validate(event)' class="form-control mr-2 timepicker-alert fs-14" name="timepicker" value="<?php if (isset($params['timepicker'])) echo $params['timepicker']; ?>" id="timepicker_alert" size="10" placeholder="">
                         <input type="hidden" class="form-control " id="default_timepicker" value="">
-
-                        <input type="text" class="form-control mr-2" size="30" placeholder="Email1" id="mail1" value="<?php if(isset($params['mail_receipt_1'])) echo $params['mail_receipt_1']; ?>">
-                        <input type="text" class="form-control mr-2" size="30" placeholder="Email2" id="mail2" value="<?php if(isset($params['mail_receipt_2'])) echo $params['mail_receipt_2']; ?>">
-                        <button type="button" id="submitAlert" class="rounded-pill btn btn-primary ">
+                        <input type="email" class="form-control mr-2 email1 fs-14" size="30" autocomplete="email" placeholder="Email1" id="mail1" name="Email1" value="<?php if (isset($params['mail_receipt_1'])) echo $params['mail_receipt_1']; ?>">
+                    </form>
+                    <form class="form-inline form-top" action="#">
+                        <input type="email" class="form-control mr-2 email2 fs-14" size="30" autocomplete="email" placeholder="Email2" id="mail2" name="Email2" value="<?php if (isset($params['mail_receipt_2'])) echo $params['mail_receipt_2']; ?>">
+                        <button type="button" id="submitAlert" class="rounded-pill btn btn-primary btn-form h-35">
                             Submit
                         </button>
-
                     </form>
+					<div style="clear:both"></div>
+					</div>
                     <hr />
                     <form class="form-inline" action="#">
                         <div class="form-group  mb-2">
-                            <select id="multiple-select" name="staffIds" class="sStaffID form-control " style="width:260px" place>
+                            <select id="multiple-select" name="staffIds" class="sStaffID form-control h-35" style="width:260px" place>
                                 <option value=""></option>
                                 <?php foreach ($staffIds as $staffId => $value) : ?>
                                     <option value="<?= $staffId ?>"><?= $value ?></option>
@@ -72,17 +102,21 @@ echo $this->Html->css('admin/style_schedule.css', ['block' => 'head-end']) . PHP
                         </div>
                         <div class="form-group mx-sm-3 col-xs-2 mb-2">
                             <span style="color:#000;margin-right:3px;font-size:14px">From</span>
-                            <input type="text" class="form-control" value="<?= @$params['datepicker'] ?>" name="datepicker" id="datepicker_date" size="10" placeholder="Date">
+                            <input type="text" class="form-control fs-14" value="<?= @$params['datepicker'] ?>" name="datepicker" id="datepicker_date" size="10" placeholder="Date">
                             <input type="hidden" class="form-control" id="default_datepicker" value="">
                         </div>
                         <div class="form-group mx-sm-3 col-xs-2 mb-2">
                             <span style="color:#000;margin-right:3px;font-size:14px">To</span>
-                            <input type="text" class="form-control" value="<?= @$params['datepicker'] ?>" name="datepicker" id="datepicker_date_to" size="10" placeholder="Date">
+                            <input type="text" class="form-control fs-14" value="<?= @$params['datepicker'] ?>" name="datepicker" id="datepicker_date_to" size="10" placeholder="Date">
                             <input type="hidden" class="form-control" id="default_to_datepicker" value="">
+                        </div>
+                        <div class="form-group mx-sm-3 col-xs-2 mb-2">
+                            <button type="button" id="clearFilter" class="btn btn-danger btn-form h-35" style="width:70px">Clear</button>
                         </div>
                         <button type="button" id="filterSchedule" class="rounded-pill btn btn-primary mb-2" hidden>
                             Filter
                         </button>
+
                     </form>
                 </div>
             </div>
@@ -103,10 +137,10 @@ echo $this->Html->css('admin/style_schedule.css', ['block' => 'head-end']) . PHP
                                 <th>Name</th>
                                 <th>Check In</th>
                                 <th>Check Out</th>
-                                <!-- <th>Customer Name</th>
+                                <th>Customer Name</th>
                                 <th>GPS</th>
                                 <th>Distance</th>
-                                <th>Report</th> -->
+                                <!-- <th>Report</th>  -->
                                 <th>Face Image</th>
                             </tr>
                         </thead>

@@ -9,7 +9,7 @@ $(document).ready(function() {
         $('.show-password').data('type', 'show')
         pass = $("input[name='Password']").val()
         document.getElementsByName('Password')[0].type = 'password'
-        $("input[name='Password']").val('')
+            // $("input[name='Password']").val('')
 
         if ($(this).hasClass('staff-active')) {
             $(this).removeClass("staff-active")
@@ -39,14 +39,14 @@ $(document).ready(function() {
     $('#btnSubmitCheckin').on('click', function(e) {
         e.preventDefault()
         $(this).attr('disabled', true)
-            // if (validateForm()) { validateCoordinate("checkin") } else $(this).attr('disabled', false)
-        if (validateForm()) { validateCheckin() } else $(this).attr('disabled', false)
+        if (validateForm()) { validateCoordinate("checkin") } else $(this).attr('disabled', false)
+            // if (validateForm()) { validateCheckin() } else $(this).attr('disabled', false)
     })
     $('#btnSubmitCheckout').on('click', function(e) {
         e.preventDefault()
         $(this).attr('disabled', true)
-            // if (validateForm()) { validateCoordinate("checkout") } else $(this).attr('disabled', false)
-        if (validateForm()) { validateCheckout() } else $(this).attr('disabled', false)
+        if (validateForm()) { validateCoordinate("checkout") } else $(this).attr('disabled', false)
+            // if (validateForm()) { validateCheckout() } else $(this).attr('disabled', false)
     })
 
     // Event click CAPTURE

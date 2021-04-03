@@ -41,13 +41,24 @@ class HomepageController extends AppController
     }
 
     public function index(){
-        
+        $today = date('Y-m-d');
         $staffs = $this->TBLMStaff->find()
+            ->select([
+                'StaffID',
+                'Name',
+                'Password',
+                'Position',
+                'Image',
+                'Checkedin' => "(SELECT CASE WHEN tblTTimeCard.TimeIn IS NULL THEN 0 ELSE 1 END FROM tblTTimeCard where TBLMStaff.StaffID = tblTTimeCard.StaffID AND tblTTimeCard.Date = '$today')",
+            ])
             ->where([
                 'FlagDelete' => 0,
                 'Position LIKE' => '%Leader%'
             ]);
         $this->set('staffs', $staffs);
+        // get customer
+        $customer = $this->TBLMCustomer->find()->where(['FlagDelete' => 0])->first();
+        $this->set('customer', $customer);
     }
 
     public function getPassword(){
@@ -168,12 +179,14 @@ class HomepageController extends AppController
 
     public function insertCheckin(){
         $params = $this->getRequest()->getData();
+        $customer = $this->TBLMCustomer->find()->where(['FlagDelete' => 0])->first();
         $result['success'] = 0;
 
         $timecard = $this->TBLTTimeCard->newEntity();
         $timecard->CheckinLocation = $params['coord'];
         $timecard->Date = date('Y-m-d');
         $timecard->TimeIn = date('H:i:s');
+        $timecard->CustomerID = $customer->CustomerID; // TODO: temporary customer
         $timecard->StaffID = $params['staffid'];
         $timecard->Created_at = date('Y-m-d H:i:s');
         $saved = $this->TBLTTimeCard->save($timecard);
@@ -191,6 +204,7 @@ class HomepageController extends AppController
 
     public function insertCheckout(){
         $params = $this->getRequest()->getData();
+        $customer = $this->TBLMCustomer->find()->where(['FlagDelete' => 0])->first();
         $result['success'] = 0;
 
         // get timecard checkin
@@ -203,6 +217,7 @@ class HomepageController extends AppController
         if($timecard){
             // insert DB
             $timecard->TimeOut = date('H:i:s');
+            $timecard->CustomerID = $customer->CustomerID; // TODO: temporary customer
             $total_time = abs(strtotime(Time::now()) - strtotime($timecard->TimeIn));
             $total_time = number_format($total_time / 3600, 2);
             $timecard->TotalTime = $total_time;

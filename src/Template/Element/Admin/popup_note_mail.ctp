@@ -15,8 +15,8 @@
                 </button> -->
             </div>
             <div class="modal-body ask-folder">
-                <p class="note-mail"><span style="color:#ff4343;font-weight:bold">Note</span>: <br/>If you use <b>Gmail</b> to receive reports, <b>the first message</b> sent by the system may be in the <b>Spam folder</b> because of <b>Gmail's anti-spam mechanism</b>.
-                <br/> In that case, please click <b>Report not spam</b> in the mail so that future messages will be delivered to the <b>Inbox</b>.
+                <p class="note-mail"><span style="color:#ff4343;font-weight:bold">Note</span>: <br/>If you enter the <b>new email address</b> to receive reports, <b>the first message</b> sent by the system may be in the <b>Spam folder</b> because <b>anti-spam mechanism</b>.
+                <br/> In that case, please confirm this is <b>not spam</b> so that future messages will be delivered to the <b>Inbox</b>.
                 <br/> Thank you!
                 </p>
             </div>

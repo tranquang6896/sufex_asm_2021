@@ -63,7 +63,7 @@ a:not([href]):not([class]):hover {
 .content {
     margin: 0px 0px 10px 0px;
     background: #fff;
-    padding: 20px 25px 20px 20px;
+    padding: 10px 10px 0px 10px;
 }
 
 .title {
@@ -75,7 +75,7 @@ a:not([href]):not([class]):hover {
 }
 
 .div-left {
-    width: 56%;
+    width: 58%;
     float: left;
     /* display:flex; */
 }
@@ -90,8 +90,8 @@ a:not([href]):not([class]):hover {
 }
 
 .div-right {
-    width: 44%;
-    float: right;
+    width: 42%;
+    float: left;
 }
 
 .div-staff {
@@ -103,12 +103,12 @@ a:not([href]):not([class]):hover {
 .staff-avatar {
     float: left;
     background-color: #EAEAEA;
-    padding: 7px;
+    padding: 5px 0 0 0;
     position: relative;
     border: 1px #ccc solid;
-    width: 26%;
+    width: 31.111111111%;
     float: left;
-    margin: 5px;
+    margin: 0px 10px 10px 0;
     text-align: center;
     cursor: pointer;
 }
@@ -142,7 +142,7 @@ a:not([href]):not([class]):hover {
 
 .div-left img {
     /* width:100% */
-    height: 79px;
+    height: 92px;
 }
 
 .div-left p {
@@ -158,7 +158,7 @@ a:not([href]):not([class]):hover {
 
 .form {
     /* display:flex; */
-    margin: 20px 0 10px 0px;
+    margin: 18px 0 8px 0px;
     width: 100%;
     /* padding: 0px; */
 }
@@ -169,7 +169,7 @@ a:not([href]):not([class]):hover {
     background: #f2f2f2;
     border: 0;
     margin: 0 5px 0 0px;
-    padding: 10px;
+    padding: 12px;
     box-sizing: border-box;
     border: 1px #ccc solid;
 }
@@ -178,7 +178,7 @@ a:not([href]):not([class]):hover {
     font-family: "Roboto", sans-serif;
     text-transform: uppercase;
     outline: 0;
-    background: #AF2327;
+   
     border: 0;
     padding: 10px;
     color: #FFFFFF;
@@ -186,7 +186,22 @@ a:not([href]):not([class]):hover {
     -webkit-transition: all 0.3 ease;
     transition: all 0.3 ease;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 10px;
+    height: 80px;
+    margin-bottom: 10px;
+
+box-shadow:inset 0px 1px 0px 0px #f7c5c0;
+	background:linear-gradient(to bottom, #dc5d52 5%, #c72415 100%);
+	background-color:#f54838;
+	border-radius:6px;
+	border:1px solid #d83526;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #b23e35;
 }
 
 .form button:hover,
@@ -208,7 +223,21 @@ a:not([href]):not([class]):hover {
     -webkit-transition: all 0.3 ease;
     transition: all 0.3 ease;
     cursor: pointer;
-    border-radius: 4px;
+    border-radius: 10px;
+    /* height: 80px; */
+box-shadow:inset 0px 1px 0px 0px #bee2f9;
+	background:linear-gradient(to bottom, #4CAF50  5%, #2b672e 100%);
+	background-color:#63b8ee;
+	border-radius:6px;
+	border:1px solid #3866a3;
+	display:inline-block;
+	cursor:pointer;
+
+	
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #436990;
 }
 
 .form .button1:hover,
@@ -288,7 +317,7 @@ a:not([href]):not([class]):hover {
     font-weight: bold;
     padding: 10px;
     text-align: center;
-    margin-top: 20px
+    margin-top: 5px;
 }
 
 .m-t40 {
@@ -487,7 +516,23 @@ a:not([href]):not([class]):hover {
     height: 50px;
     overflow: scroll
 }
-
+@media (max-width: 768px){
+	.staff-avatar{
+	width: 30.4%!important;
+	}
+	.div-left img {
+    /* width: 100%; */
+    height: 75px;
+}
+.title {
+    font-size: 20px;
+    margin-left: 20px;
+    font-weight: 700;
+    /* margin-bottom: 50px; */
+    line-height: 26px;
+}
+	
+}
 @media (min-width: 576px) {
     .modal-dialog {
         max-width: 500px;
@@ -549,6 +594,8 @@ a:not([href]):not([class]):hover {
     font-size: 17px;
 }
 
+
+
 #CapturePhoto {
     width: 100%;
 }
@@ -561,4 +608,8 @@ a:not([href]):not([class]):hover {
 
 .opacity-window {
     opacity: 0.8 !important;
+}
+.video{
+	margin-top:0px!important
+	
 }

@@ -28,6 +28,11 @@
             max-height: 620px;
             margin-top: 5px
         }
+
+        .staff-checkedin {
+            background-color: #0055B3 !important;
+            color: #fff !important;
+        }
     </style>
 </head>
 
@@ -35,7 +40,7 @@
     <div id="page-container">
         <div class="top-menu">
             <div href="index.html" class="navbar-brand">
-                <img src="<?php echo $this->Url->build("/",true) ;?>img/logo.png" class="media-object" alt="" />
+                <img src="<?php echo $this->Url->build("/",true) ;?>img/logo-w.png" class="media-object" alt="" />
                 <div class="title">ASM System Ver 1.01 for Sufex</div>
             </div>
 
@@ -46,7 +51,7 @@
             <div class="div-left">
 
                 <?php foreach($staffs as $staff):?>
-                    <div class="staff-avatar" data-active="false" data-staffid="<?php echo $staff->StaffID; ?>">
+                    <div class="staff-avatar <?php if($staff->Checkedin == 1) echo 'staff-checkedin'; ?> " data-active="false" data-staffid="<?php echo $staff->StaffID; ?>">
                         <?php if($staff->Image != ""):?> 
                             <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>files/StaffImage/<?php echo $staff->Image?>" /></p>
                         <?php endif; ?>
@@ -61,7 +66,7 @@
             <div class="div-right">
                 <video class="video" id="video" autoplay muted playsinline></video>
 
-                <div class="headoff">HEAD OFFICE</div>
+                <div class="headoff"><?php if(isset($customer)) echo $customer->Name; ?></div>
 
                 <div class="form form-password">
                     <input type="password" name="Password" class="w-100 input-password" placeholder="Enter password" />

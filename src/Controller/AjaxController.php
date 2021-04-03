@@ -223,6 +223,7 @@ class AjaxController extends Controller
                 'timein' => 'TBLTTimeCard.TimeIn',
                 'imgcheckin' => "(select CONCAT(tblTFaceImage.`Source`, Name) From tblTFaceImage where TBLTTimeCard.TimeCardID = tblTFaceImage.TimeCardID AND tblTFaceImage.NAME LIKE '%IN%')",
                 'imgcheckout' => "(select CONCAT(tblTFaceImage.`Source`, Name) From tblTFaceImage where TBLTTimeCard.TimeCardID = tblTFaceImage.TimeCardID AND tblTFaceImage.NAME LIKE '%OUT%')",
+                'alerttime' => "(select Value from tblMItem where Code = 'alert_time')"
             ])
             ->where($conditions)
             ->order($order);

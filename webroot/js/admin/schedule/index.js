@@ -89,7 +89,8 @@ var table = $('#serverDataTable').DataTable({
                 var distance = (row.distance.toString().indexOf(".") > 0) ? commafy(Number(row.distance.toString().split(".")[0])) + "." + row.distance.toString().split(".")[1] : row.distance
                 return "" +
                     row.StaffID +
-                    '<span class="tooltip-distance">StaffID: ' + row.StaffID + ' - Total distances: ' + distance + ' km</span>'
+                    ''
+                    // '<span class="tooltip-distance">StaffID: ' + row.StaffID + ' - Total distances: ' + distance + ' km</span>'
             }
         },
         {
@@ -105,8 +106,8 @@ var table = $('#serverDataTable').DataTable({
             "data": "checkin",
             "sClass": "text-center checkin",
             render: function(data, type, row) {
-                var timein = moment(row.timein).format("HH:mm:ss")
-                var time_request = "08:00:00"
+                var timein = moment(row.timein).format("HH:mm")
+                var time_request = row.alerttime
                 var flag_valid = ""
                 if (timein > time_request) {
                     flag_valid = '<input type="hidden" class="flag-late" value="late" />'
@@ -120,7 +121,10 @@ var table = $('#serverDataTable').DataTable({
         {
             "data": "CustomerName",
             render: function(data, type, row) {
-                return ""
+                return "" +
+                    "<a href=\"javascript:void(0)\" class=\"open-customer\" data-customer=\"" + row.CustomerID + "\">\n" +
+                    "\t" + row.CustomerName + "\n" +
+                    "</a>"
             }
         },
         {
@@ -128,7 +132,27 @@ var table = $('#serverDataTable').DataTable({
             "sClass": "text-center",
             orderable: false,
             render: function(data, type, row) {
-                return ""
+                lat = removeNull(row.lat)
+                long = removeNull(row.long)
+                slat = removeNull(row.slat)
+                slong = removeNull(row.slong)
+                var distance = Number(getDistance({ 'lat': lat, 'lng': long }, { 'lat': slat, 'lng': slong }).replaceAll(",", ""))
+                var color = "#4e73df"
+                if (distance >= 500) {
+                    color = "#ea2d2d"
+                }
+                return "" +
+                    "<a href=\"#\" data-toggle=\"modal\" \n" +
+                    "\tdata-long=\"" + removeNull(row.long) + "\" \n" +
+                    "\tdata-lat=\"" + removeNull(row.lat) + "\" \n" +
+                    "\tdata-CustomerName=\"" + removeNull(row.CustomerName) + "\" \n" +
+                    "\tdata-slong=\"" + removeNull(row.slong) + "\" \n" +
+                    "\tdata-slat=\"" + removeNull(row.slat) + "\" \n" +
+                    "\tdata-StaffName=\"" + removeNull(row.StaffName) + "\" \n" +
+                    "\tclass=\"open-GPS\">\n" +
+                    "\t<i class=\"fas fa-map-marker-alt\" style=\"color:" + color + "\"></i>\n" +
+                    "</a>";
+                // return getDistance({'lat': removeNull(row.lat), 'long':removeNull(row.long)}, {'lat':removeNull(row.slat),'long':removeNull(row.slong)})
             }
         },
         {
@@ -136,17 +160,22 @@ var table = $('#serverDataTable').DataTable({
             "sClass": "text-right",
             orderable: false,
             render: function(data, type, row) {
-                return ""
+                if (getDistance({ 'lat': lat, 'lng': long }, { 'lat': slat, 'lng': slong }) != 'NaN') {
+                    return getDistance({ 'lat': lat, 'lng': long }, { 'lat': slat, 'lng': slong }) + "m"
+                } else {
+                    return ""
+                }
+
             }
         },
-        {
-            data: "ID",
-            "sClass": "text-center",
-            orderable: false,
-            render: function(data, type, row) {
-                return ""
-            }
-        },
+        // {
+        //     data: "ID",
+        //     "sClass": "text-center",
+        //     orderable: false,
+        //     render: function(data, type, row) {
+        //         return ""
+        //     }
+        // },
         {
             data: "ID",
             "sClass": "text-center",
@@ -241,8 +270,12 @@ jQuery(document).ready(function() {
     // TIMEPICKER
     $('#timepicker_alert')
         .datetimepicker({ format: 'HH:mm' })
-        .keypress(function(event) { event.preventDefault(); })
-        .keydown(false)
+
+    // setInputFilter(document.getElementById("timepicker_alert"), function(value) {
+    //     return /^-?\d*$/.test(value);
+    // });
+    // .keypress(function(event) { event.preventDefault(); })
+    // .keydown(false)
 
     // date range picker
     setRangeDatepicker.rangeDay('#datepicker_date', '#datepicker_date_to')
@@ -270,6 +303,7 @@ jQuery(document).ready(function() {
                 $(this).attr("disabled", false)
                 if (response.success == 1) {
                     $('#noteMailModal').modal()
+                    $('#filterSchedule').click()
                 } else {
                     swal({
                         title: "Submited failed!",
@@ -289,6 +323,22 @@ jQuery(document).ready(function() {
         return false
 
     })
+
+    // clear filter
+    $(document).on('click', '#clearFilter', function(e) {
+        e.preventDefault()
+            // clear
+        $(".sStaffID").val(null).trigger('change');
+        sStaffID = ''
+            // $(".sCustomerID").val(null).trigger('change');
+            // sCustomerID = ''
+        $('#datepicker_date').val(moment().format('YYYY/MM/DD'))
+        $('#datepicker_date_to').val(moment().format('YYYY/MM/DD'))
+        setRangeDatepicker.rangeDay('#datepicker_date', '#datepicker_date_to')
+            // reset table
+        $('#filterSchedule').click()
+    })
+
     $(document).on('click', '#filterSchedule', function() {
         load_table = 0
         showMapByStaff()
@@ -649,6 +699,41 @@ function commafy(num) {
         str[1] = str[1].replace(/(\d{3})/g, '$1 ');
     }
     return str.join(',');
+}
+
+// function setInputFilter(textbox, inputFilter) {
+//     ["input", "keydown", "keyup", "mousedown", "mouseup", "select", "contextmenu", "drop"].forEach(function(event) {
+//         textbox.addEventListener(event, function() {
+//             if (inputFilter(this.value)) {
+//                 this.oldValue = this.value;
+//                 this.oldSelectionStart = this.selectionStart;
+//                 this.oldSelectionEnd = this.selectionEnd;
+//             } else if (this.hasOwnProperty("oldValue")) {
+//                 this.value = this.oldValue;
+//                 this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+//             } else {
+//                 this.value = "";
+//             }
+//         });
+//     });
+// }
+
+function validate(evt) {
+    var theEvent = evt || window.event;
+    var value = $('#timepicker_alert').val()
+        // Handle paste
+    if (theEvent.type === 'paste') {
+        key = event.clipboardData.getData('text/plain');
+    } else {
+        // Handle key press
+        var key = theEvent.keyCode || theEvent.which;
+        key = String.fromCharCode(key);
+    }
+    var regex = /[0-9]|\./;
+    if (!regex.test(key) || value.length > 4) { //TODO: check length
+        theEvent.returnValue = false;
+        if (theEvent.preventDefault) theEvent.preventDefault();
+    }
 }
 
 function showMapByStaff() {

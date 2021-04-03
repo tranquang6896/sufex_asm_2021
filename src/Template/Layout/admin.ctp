@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Alsok Admin</title>
+    <title>Sufex Admin</title>
     <!-- App favicon -->
     <link rel="shortcut icon" href="<?php echo $this->Url->build('/', true); ?>img/favicon.ico">
     <script async defer src="//maps.googleapis.com/maps/api/js?key=AIzaSyDExlzhnegRnzSZRxMNy-7_a56CYBmXssY&libraries=&v=weekly"></script>

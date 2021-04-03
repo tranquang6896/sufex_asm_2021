@@ -138,8 +138,8 @@
                 url: baseUrl + 'homepage/' + type,
                 data: {
                     img: data,
-                    // coord: $("#currentCoord").val(),
-                    coord: "",
+                    coord: $("#currentCoord").val(),
+                    // coord: "",
                     staffid: $('#staffID').val()
                 },
                 success: function(response) {
@@ -151,6 +151,14 @@
                         document.getElementsByName('Password')[0].type = 'password'
                         $("input[name='Password']").val('')
                             // end__clear
+                            // add class checked-in
+                        if (type == 'insertCheckin') {
+                            $(".staff-avatar").each(function() {
+                                if ($(this).attr('data-staffid') == $('#staffID').val()) {
+                                    $(this).addClass("staff-checkedin")
+                                }
+                            })
+                        }
                     } else {
                         console.log(response)
                     }

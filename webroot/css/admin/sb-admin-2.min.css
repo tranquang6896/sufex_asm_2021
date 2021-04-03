@@ -1592,13 +1592,13 @@ pre code {
 }
 
 .table td,.table th {
-    padding: .75rem;
+    padding: 5px;
     vertical-align: top;
     border-top: 1px solid #e3e6f0;
 }
 
 .table thead th {
-    vertical-align: bottom;
+    vertical-align: middle;
     border-bottom: 2px solid #e3e6f0;
     text-align: center;
 }
@@ -1835,6 +1835,10 @@ pre code {
     .table-responsive-md>.table-bordered {
         border: 0
     }
+#wrapper {
+    display: flex;
+    min-width: 1350px;
+}
 }
 
 @media (max-width: 991.98px) {
@@ -9604,7 +9608,7 @@ a:focus {
 
 #wrapper {
     display: flex;
-    min-width: 1350px;
+    min-width: 1200px;
 }
 
 #wrapper #content-wrapper {

@@ -56,44 +56,44 @@ class AppController extends Controller
          */
         //$this->loadComponent('Security');
 
-        $this->loadComponent('Auth', [
-            'authenticate' => [
-                'Cookie' => [
-                    'fields' => [
-                        'username' => 'StaffID',
-                        'password' => 'Password',
-                    ],
-                    'userModel' => 'TBLMStaff',
-                    // scope is deprecated, use 'finder' instead
-                    //'scope' => ['QuitJobDate IS NULL'],
-                    'finder' => 'auth',
-                    'cookie' => [
-                        'name' => 'remember_me_cookie',
-                        'expires' => '+2 weeks',
-                    ],
-                ],
-                'Ldap' => [
-                    'fields' => [
-                        'username' => 'StaffID',
-                        'password' => 'Password',
-                    ],
-                    'userModel' => 'TBLMStaff',
-                    // scope is deprecated, use 'finder' instead
-                    //'scope' => ['QuitJobDate IS NULL'],
-                    'finder' => 'auth',
-                ],
-            ],
-            'loginAction' => [
-                'controller' => 'Users',
-                'action' => 'login',
-            ],
-            'storage' => [
-                'className' => 'Session',
-                'key' => 'Auth.User',
-            ],
-            // If unauthorized, return them to page they were just on
-            // 'unauthorizedRedirect' => $this->referer()
-        ]);
+        // $this->loadComponent('Auth', [
+        //     'authenticate' => [
+        //         'Cookie' => [
+        //             'fields' => [
+        //                 'username' => 'StaffID',
+        //                 'password' => 'Password',
+        //             ],
+        //             'userModel' => 'TBLMStaff',
+        //             // scope is deprecated, use 'finder' instead
+        //             //'scope' => ['QuitJobDate IS NULL'],
+        //             'finder' => 'auth',
+        //             'cookie' => [
+        //                 'name' => 'remember_me_cookie',
+        //                 'expires' => '+2 weeks',
+        //             ],
+        //         ],
+        //         'Ldap' => [
+        //             'fields' => [
+        //                 'username' => 'StaffID',
+        //                 'password' => 'Password',
+        //             ],
+        //             'userModel' => 'TBLMStaff',
+        //             // scope is deprecated, use 'finder' instead
+        //             //'scope' => ['QuitJobDate IS NULL'],
+        //             'finder' => 'auth',
+        //         ],
+        //     ],
+        //     'loginAction' => [
+        //         'controller' => 'Users',
+        //         'action' => 'login',
+        //     ],
+        //     'storage' => [
+        //         'className' => 'Session',
+        //         'key' => 'Auth.User',
+        //     ],
+        //     // If unauthorized, return them to page they were just on
+        //     // 'unauthorizedRedirect' => $this->referer()
+        // ]);
 
         $this->loadModel('TBLMStaff');
     }
@@ -104,22 +104,22 @@ class AppController extends Controller
         $this->Cookie->key = 'qSI232qs*&sXOw!adre@34SAv!@*(XSL#$%)asGb$@11~&#95;+!@#HKis~#^';
         $this->Cookie->httpOnly = true;
 
-        $cookie = $this->Cookie->read('remember_me_cookie');
-        $this->set('cookie', $cookie);
+        // $cookie = $this->Cookie->read('remember_me_cookie');
+        // $this->set('cookie', $cookie);
 
         //get Basic Information
-        $staffId = $this->Auth->user('StaffID');
-        if ($staffId) {
-            $staff = $this->TBLMStaff->find()->where(['StaffID' => $staffId])->first();
-            $this->set('staff', $staff);
-        }
+        // $staffId = $this->Auth->user('StaffID');
+        // if ($staffId) {
+        //     $staff = $this->TBLMStaff->find()->where(['StaffID' => $staffId])->first();
+        //     $this->set('staff', $staff);
+        // }
 
-        // get language
-        if ($this->request->session()->check('Config.language')) {
-            I18n::setLocale($this->request->session()->read('Config.language'));
-        } else {
-            $this->request->session()->write('Config.language', 'vn_VN');
-        }
+        // // get language
+        // if ($this->request->session()->check('Config.language')) {
+        //     I18n::setLocale($this->request->session()->read('Config.language'));
+        // } else {
+        //     $this->request->session()->write('Config.language', 'vn_VN');
+        // }
     }
 
     public function changeLanguage($language = null)
