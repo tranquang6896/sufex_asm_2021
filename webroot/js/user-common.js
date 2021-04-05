@@ -159,6 +159,14 @@
                                 }
                             })
                         }
+                        // add class checked-out
+                        else {
+                            $(".staff-avatar").each(function() {
+                                if ($(this).attr('data-staffid') == $('#staffID').val()) {
+                                    $(this).addClass("staff-checkedout")
+                                }
+                            })
+                        }
                     } else {
                         console.log(response)
                     }

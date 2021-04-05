@@ -106,7 +106,7 @@ class TBLMStaffTable extends Table{
      * @return array
      */
     public function getAllStaff() {
-        $staff=$this->find()->select(['StaffID','Name'])->where(['FlagDelete' => 0])->order(['StaffID' => 'asc']);
+        $staff=$this->find()->select(['StaffID','Name'])->where(['FlagDelete' => 0, "Position LIKE '%Leader%'"])->order(['StaffID' => 'asc']);
         $result=[];
         foreach($staff as $key =>$value){
             $id=$value['StaffID'];

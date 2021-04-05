@@ -78,7 +78,7 @@ echo $this->Html->css('admin/style_schedule.css', ['block' => 'head-end']) . PHP
 				<div style="width:100%">
                     <form class="form-inline form-top" action="#">
                         <span style="font-size:14px; margin-right:5px">Alert Time</span>
-                        <input type="text" onkeypress='validate(event)' class="form-control mr-2 timepicker-alert fs-14" name="timepicker" value="<?php if (isset($params['timepicker'])) echo $params['timepicker']; ?>" id="timepicker_alert" size="10" placeholder="">
+                        <input type="text" onkeypress='validateInput(event)' class="form-control mr-2 timepicker-alert fs-14" name="timepicker" value="<?php if (isset($params['timepicker'])) echo $params['timepicker']; ?>" id="timepicker_alert" size="10" placeholder="">
                         <input type="hidden" class="form-control " id="default_timepicker" value="">
                         <input type="email" class="form-control mr-2 email1 fs-14" size="30" autocomplete="email" placeholder="Email1" id="mail1" name="Email1" value="<?php if (isset($params['mail_receipt_1'])) echo $params['mail_receipt_1']; ?>">
                     </form>

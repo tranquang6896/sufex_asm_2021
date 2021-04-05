@@ -50,11 +50,13 @@ class HomepageController extends AppController
                 'Position',
                 'Image',
                 'Checkedin' => "(SELECT CASE WHEN tblTTimeCard.TimeIn IS NULL THEN 0 ELSE 1 END FROM tblTTimeCard where TBLMStaff.StaffID = tblTTimeCard.StaffID AND tblTTimeCard.Date = '$today')",
+                'Checkedout' => "(SELECT CASE WHEN tblTTimeCard.TimeOut IS NULL THEN 0 ELSE 1 END FROM tblTTimeCard where TBLMStaff.StaffID = tblTTimeCard.StaffID AND tblTTimeCard.Date = '$today')",
             ])
             ->where([
                 'FlagDelete' => 0,
                 'Position LIKE' => '%Leader%'
             ]);
+            // var_dump($staffs);exit;
         $this->set('staffs', $staffs);
         // get customer
         $customer = $this->TBLMCustomer->find()->where(['FlagDelete' => 0])->first();

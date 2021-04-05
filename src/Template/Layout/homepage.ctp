@@ -10,7 +10,7 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <meta content="" name="description" />
     <meta content="" name="author" />
-    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,500,600,700|Poppins:400,500&amp;display=swap"/>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Montserrat:400,500,600,700|Poppins:400,500&amp;display=swap" />
 
     <?php
     // echo $this->Html->css('bootstrap.min.css') . PHP_EOL;
@@ -29,9 +29,17 @@
             margin-top: 5px
         }
 
+        .staff-active {
+            background-color: #0055B3;
+            color: #fff
+        }
         .staff-checkedin {
-            background-color: #0055B3 !important;
+            background: linear-gradient(to bottom, #4CAF50 5%, #2b672e 100%) !important;
             color: #fff !important;
+        }
+        .staff-checkedout {
+            background: linear-gradient(to bottom, #dc5d52 5%, #c72415 100%) !important;
+            color: #fff
         }
     </style>
 </head>
@@ -40,7 +48,7 @@
     <div id="page-container">
         <div class="top-menu">
             <div href="index.html" class="navbar-brand">
-                <img src="<?php echo $this->Url->build("/",true) ;?>img/logo-w.png" class="media-object" alt="" />
+                <img src="<?php echo $this->Url->build("/", true); ?>img/logo-w.png" class="media-object" alt="" />
                 <div class="title">ASM System Ver 1.01 for Sufex</div>
             </div>
 
@@ -50,15 +58,15 @@
         <div id="content" class="content">
             <div class="div-left">
 
-                <?php foreach($staffs as $staff):?>
-                    <div class="staff-avatar <?php if($staff->Checkedin == 1) echo 'staff-checkedin'; ?> " data-active="false" data-staffid="<?php echo $staff->StaffID; ?>">
-                        <?php if($staff->Image != ""):?> 
-                            <p><img alt="" src="<?php echo $this->Url->build("/",true) ;?>files/StaffImage/<?php echo $staff->Image?>" /></p>
+                <?php foreach ($staffs as $staff) : ?>
+                    <div class="staff-avatar <?php if ($staff->Checkedin == 1) echo 'staff-checkedin'; ?> <?php if ($staff->Checkedout == 1) echo 'staff-checkedout'; ?>" data-active="false" data-staffid="<?php echo $staff->StaffID; ?>">
+                        <?php if ($staff->Image != "") : ?>
+                            <p><img alt="" src="<?php echo $this->Url->build("/", true); ?>files/StaffImage/<?php echo $staff->Image ?>" /></p>
                         <?php endif; ?>
 
                         <p><?php echo $staff->Name; ?></p>
                     </div>
-                <?php endforeach;?>
+                <?php endforeach; ?>
 
                 <div class="clearfix"></div>
             </div>
@@ -66,7 +74,7 @@
             <div class="div-right">
                 <video class="video" id="video" autoplay muted playsinline></video>
 
-                <div class="headoff"><?php if(isset($customer)) echo $customer->Name; ?></div>
+                <div class="headoff"><?php if (isset($customer)) echo $customer->Name; ?></div>
 
                 <div class="form form-password">
                     <input type="password" name="Password" class="w-100 input-password" placeholder="Enter password" />
@@ -133,7 +141,7 @@
         const date = document.getElementById("date");
 
         function updateDate() {
-           
+
             let clockJSRead = moment().format("YYYY/MM/DD HH:mm:ss");
             date.textContent = clockJSRead;
         }

@@ -718,7 +718,7 @@ function commafy(num) {
 //     });
 // }
 
-function validate(evt) {
+function validateInput(evt) {
     var theEvent = evt || window.event;
     var value = $('#timepicker_alert').val()
         // Handle paste
@@ -730,7 +730,7 @@ function validate(evt) {
         key = String.fromCharCode(key);
     }
     var regex = /[0-9]|\./;
-    if (!regex.test(key) || value.length > 4) { //TODO: check length
+    if (!regex.test(key) || value.length > 4) {
         theEvent.returnValue = false;
         if (theEvent.preventDefault) theEvent.preventDefault();
     }
