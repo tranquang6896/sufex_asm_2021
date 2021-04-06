@@ -12,11 +12,17 @@ $(document).ready(function() {
             // $("input[name='Password']").val('')
 
         if ($(this).hasClass('staff-active')) {
+            // #EAEAEA
             $(this).removeClass("staff-active")
+                // $(this).css('background-color', '#EAEAEA', "important")
+                // $(this).css('color', "#000", "important")
             $('#staffID').val('')
             $('#pwStaff').val('')
         } else {
+            // #0055B3 
             $(this).addClass("staff-active")
+                // $(this).css('background-color', '#0055B3', "important")
+                // $(this).css('color', "#fff", "important")
             var staffID = $(this).attr('data-staffid')
                 // set staff
             $('#staffID').val(staffID)
@@ -26,7 +32,10 @@ $(document).ready(function() {
             // refresh
         $(".staff-avatar").each(function() {
             if ($(this).attr('data-staffid') != staffid) {
+                // #EAEAEA
                 $(this).removeClass("staff-active")
+                    // $(this).css('background-color', '#EAEAEA', "important")
+                    // $(this).css('color', "#000", "important")
             }
         })
     })
@@ -39,13 +48,23 @@ $(document).ready(function() {
     $('#btnSubmitCheckin').on('click', function(e) {
         e.preventDefault()
         $(this).attr('disabled', true)
-        if (validateForm()) { validateCoordinate("checkin") } else $(this).attr('disabled', false)
+        swal({
+            title: '',
+            text: "Please wait a few seconds!",
+            buttons: false
+        })
+        if (validateForm()) { initializeMap("checkin") } else $(this).attr('disabled', false)
             // if (validateForm()) { validateCheckin() } else $(this).attr('disabled', false)
     })
     $('#btnSubmitCheckout').on('click', function(e) {
         e.preventDefault()
         $(this).attr('disabled', true)
-        if (validateForm()) { validateCoordinate("checkout") } else $(this).attr('disabled', false)
+        swal({
+            title: '',
+            text: "Please wait a few seconds!",
+            buttons: false
+        })
+        if (validateForm()) { initializeMap("checkout") } else $(this).attr('disabled', false)
             // if (validateForm()) { validateCheckout() } else $(this).attr('disabled', false)
     })
 
@@ -145,25 +164,26 @@ function validateForm() {
     // })
 }
 
-function validateCoordinate(action) {
-    initializeMap()
-    setTimeout(function() {
-        var allow_location = ($('#currentCoord').val() != "none") ? true : false
-        if (!allow_location) {
-            swal({
-                    title: '',
-                    text: "Please enable location services on your device !",
-                    button: 'OK'
-                })
-                (action == "checkin") ? $('#btnSubmitCheckin').attr('disabled', false) : $('#btnSubmitCheckout').attr('disabled', false)
-            return false
-        } else {
-            (action == "checkin") ? validateCheckin(): validateCheckout()
-        }
-    }, 500)
-}
+// function validateCoordinate(action) {
+//     // initializeMap();
+//     // (action == "checkin") ? $('#btnSubmitCheckin').attr('disabled', false): $('#btnSubmitCheckout').attr('disabled', false)
+//     //     // setTimeout(function() {
+//         //     var allow_location = ($('#currentCoord').val() != "none") ? true : false
+//         //     if (!allow_location) {
+
+//     //         console.log('Please wait a few seconds, positioning the coordinates');
+//     //         if (action == "") { return false }
+//     //         (action == "checkin") ? $('#btnSubmitCheckin').attr('disabled', false): $('#btnSubmitCheckout').attr('disabled', false)
+//     //         return false
+//     //     } else {
+//     //         if (action == "") { return false }
+//     //         // (action == "checkin") ? validateCheckin(): validateCheckout()
+//     //     }
+//     // }, 3000)
+// }
 
 function validateCheckin() {
+    console.log('loading check-in...')
     $.ajax({
         headers: { 'X-CSRF-TOKEN': csrfToken },
         url: baseUrl + 'homepage/validateCheckin',
@@ -207,7 +227,7 @@ function validateCheckout() {
     })
 }
 
-function initializeMap() {
+function initializeMap(action) {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(showPosition, showError, {
             timeout: 10000
@@ -219,10 +239,25 @@ function initializeMap() {
     function showPosition(position) {
         let lat = position.coords.latitude
         let lng = position.coords.longitude
-        $('#currentCoord').val(lat + "," + lng)
+        $('#currentCoord').val(lat + "," + lng);
+        if (action != "") swal.close()
+        if (action == "checkin") validateCheckin()
+        if (action == "checkout") validateCheckout()
     }
 
     function showError(error) {
         console.log(error)
+        swal({
+            title: '',
+            text: "Please enable location services on your device !",
+            buttons: false
+        });
+        if (action == "checkin") $('#btnSubmitCheckin').attr('disabled', false)
+        if (action == "checkout") $('#btnSubmitCheckout').attr('disabled', false)
     }
 }
+
+function beforeRender() {
+    setTimeout(initializeMap(""), 1000)
+}
+window.onload = beforeRender()

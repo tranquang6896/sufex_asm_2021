@@ -25,6 +25,7 @@
         canvas = document.getElementById('canvas');
 
         turnOn(videos)
+            // initializeMap()
 
         checkin = document.getElementById('btnInsertCheckin');
         checkout = document.getElementById('btnInsertCheckout');
@@ -91,6 +92,31 @@
             track.stop();
         });
         console.log("videos off");
+    }
+
+    function initializeMap() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError, {
+                timeout: 10000
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.")
+        }
+
+        function showPosition(position) {
+            let lat = position.coords.latitude
+            let lng = position.coords.longitude
+            $('#currentCoord').val(lat + "," + lng)
+        }
+
+        function showError(error) {
+            swal({
+                title: '',
+                text: "Please enable location services on your device !",
+                button: 'OK'
+            })
+            console.log(error)
+        }
     }
 
     // Capture a photo by fetching the current contents of the video

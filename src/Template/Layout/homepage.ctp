@@ -29,17 +29,17 @@
             margin-top: 5px
         }
 
-        .staff-active {
-            background-color: #0055B3;
-            color: #fff
+        .staff-avatar:hover, .staff-active {
+            background: #0055B3;
+            color: #fff;
         }
         .staff-checkedin {
-            background: linear-gradient(to bottom, #4CAF50 5%, #2b672e 100%) !important;
-            color: #fff !important;
+            background: linear-gradient(to bottom, #4CAF50 5%, #2b672e 100%);
+            color: #fff;
         }
         .staff-checkedout {
-            background: linear-gradient(to bottom, #dc5d52 5%, #c72415 100%) !important;
-            color: #fff
+            background: linear-gradient(to bottom, #dc5d52 5%, #c72415 100%);
+            color: #fff;
         }
     </style>
 </head>

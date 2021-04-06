@@ -730,7 +730,7 @@ function validateInput(evt) {
         key = String.fromCharCode(key);
     }
     var regex = /[0-9]|\./;
-    if (!regex.test(key) || value.length > 4) {
+    if (!regex.test(key) || value.length > 5) {
         theEvent.returnValue = false;
         if (theEvent.preventDefault) theEvent.preventDefault();
     }
